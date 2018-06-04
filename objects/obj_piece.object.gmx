@@ -190,6 +190,7 @@ for(var i = 0; i &lt; 4; i++)
     {
         print("YOU LOST");
         room_goto(rm_main_menu);
+        audio_stop_sound(global.control.music);
     }
 }
 
@@ -345,31 +346,31 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
         if( fallingTimer == -1 ) { fallingTimer = global.SOLIDIFY_TIME*global.FALLING_SOLIDIFY_MODIFIER; }       if( fallingTimer == -1 ) { fallingTimer = global.SOLIDIFY_TIME*global.FALLING_SOLIDIFY_MODIFIER;  }
     }
  
-    if(falling) { IG += global.fallSpeed*speeding*delta_time/1000000*60; }
+    //if(falling) { IG += global.fallSpeed*speeding*delta_time/1000000*60; }
+    if(falling) { IG += global.fallSpeed*speeding; }
     else { IG = 0; }
-    
+
     if(IG &gt; 1)
     {    
         var amt = floor(IG);
         var hit = true; //false;
         
-        var diff = amt;
         for(var i = 0; i &lt; 4; i++) //For each segment
         {   
             var this_x = segments[i].x;
             var j = 0;
-            for(j = segments[i].y; j &lt; segments[i].y+amt and j &lt; global.BLOCKS_TALL+4; j++) //For each height
+            for(j = segments[i].y + 1; j &lt;= segments[i].y+amt and j &lt; global.BLOCKS_TALL+4; j++) //For each height
             {
                 var _obj = global.segArr[this_x, j];
                 if(_obj != noone and _obj.parent != id)
                 {
-                    if(j - segments[i].y - 1 &lt; diff) { diff = j - segments[i].y - 1; }
+                    if(j - segments[i].y - 1 &lt; amt) { amt = j - segments[i].y - 1; }
                     break;
                 }
             }
             if(j &gt;= global.BLOCKS_TALL+4)
             {
-                if(j - segments[i].y - 1 &lt; diff) { diff = global.BLOCKS_TALL+4 - segments[i].y - 1; }
+                if(j - segments[i].y - 1 &lt; amt) { amt = global.BLOCKS_TALL+4 - segments[i].y - 1; }
             }
         }
         
@@ -382,9 +383,10 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
             if( nonmovementTimer == -1 ) { nonmovementTimer = global.SOLIDIFY_TIME; }
             if( rotationTimer == -1 ) { rotationTimer = global.SOLIDIFY_TIME*global.ROTATION_SOLIDIFY_MODIFIER; }
             if( fallingTimer == -1 ) { fallingTimer = global.SOLIDIFY_TIME*global.FALLING_SOLIDIFY_MODIFIER; }
-            for(var i = 0; i &lt; 4; i++) { segments[i].y += diff; }  
+            for(var i = 0; i &lt; 4; i++) { segments[i].y += amt; }  
         }  
         
+        print(string(current_time) + ":  AMT: " + string(amt));
         IG -= amt;
     }
 }

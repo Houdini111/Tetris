@@ -102,7 +102,7 @@ for(i = 0; i &lt;= 500; ++i)
 global.lines = 0;
 global.level = 0;
 //global.level = 230;
-global.level = 300;
+//global.level = 300;
 //global.level = 500;
 global.fallSpeed = global.levels[global.level]/256; //IGs (256 == 1G == 1 segment per frame at 60FPS)
 
@@ -150,12 +150,15 @@ room_surf = surface_create(room_width+1, room_height);
 grid_surf = surface_create(room_width+1, room_height); 
 surface_free(grid_surf); //Free so that the grid draw to create the lines will trigger
 
+/*
 if(global.ghost) 
 {
     //global.ghostSurf = surface_create(1, 1);
     //surface_free(global.ghostSurf);
     global.ghostSurf = noone;
 }
+*/
+global.ghostSurf = noone;
 
 for(var _x = global.BLOCKS_WIDE-1; _x &gt;= 0; _x--)
 {
