@@ -29,19 +29,13 @@
 
 surf = surface_create(4*global.segmentSize, 4*global.segmentSize);
 
-ghostX = x;
-ghostY = y;
-
 falling = true;
 canFall = false;
 moving = true;
 type = "";
 rot = 0;
-
 IG = 0;
-
 swapped = false;
-
 speeding = 1;
 SOFT_DROP_SPEED = global.SOFT_DROP_SPEED; //Local copy
 
@@ -87,89 +81,162 @@ else if(global.rand_method == "Bag")
         global.control.type = " ";
     }
 }
-
 //type = "long";
 
 if(type == "long")
 {
+    x = 6;
+    y = 4;
+
     c = global.lBlue; //Color
     m_c = merge_color(c, c_white, m_b_a); //Moving color
     g_c = merge_color(c, c_white, g_b_a); //Ghost color
 
-    segments[0] = instance_create(x+2, y-0, obj_segment);
-    segments[1] = instance_create(x+2, y-1, obj_segment);
-    segments[2] = instance_create(x+2, y-2, obj_segment);    
-    segments[3] = instance_create(x+2, y-3, obj_segment);
+    segments[0] = instance_create(x-0, y, obj_segment);
+    segments[1] = instance_create(x-1, y, obj_segment);
+    segments[2] = instance_create(x-2, y, obj_segment);    
+    segments[3] = instance_create(x-3, y, obj_segment);
+    /*
+    segments[0] = instance_create(x, y-0, obj_segment);
+    segments[1] = instance_create(x, y-1, obj_segment);
+    segments[2] = instance_create(x, y-2, obj_segment);    
+    segments[3] = instance_create(x, y-3, obj_segment);
+    */
+    rot = 90;
 }
 else if(type == "square")
 {
+    x = 4;
+    y = 5;
+    
     c = global.yellow; //Color
     m_c = merge_color(c, c_white, m_b_a); //Moving color
     g_c = merge_color(c, c_white, g_b_a); //Ghost color
-
+    
+    segments[0] = instance_create(x+0, y-0, obj_segment);
+    segments[1] = instance_create(x+1, y-0, obj_segment);
+    segments[2] = instance_create(x+0, y-1, obj_segment);   
+    segments[3] = instance_create(x+1, y-1, obj_segment);
+    /*
     segments[0] = instance_create(x+1, y-0, obj_segment);
     segments[1] = instance_create(x+2, y-0, obj_segment);
     segments[2] = instance_create(x+1, y-1, obj_segment);   
     segments[3] = instance_create(x+2, y-1, obj_segment);
+    */
 }
 else if(type == "s")
 {
+    x = 3;
+    y = 4;
+    
     c = global.green; //Color
     m_c = merge_color(c, c_white, m_b_a); //Moving color
     g_c = merge_color(c, c_white, g_b_a); //Ghost color
 
+    segments[0] = instance_create(x+0, y+1, obj_segment);
+    segments[1] = instance_create(x+1, y+1, obj_segment);
+    segments[2] = instance_create(x+1, y+0, obj_segment);    
+    segments[3] = instance_create(x+2, y+0, obj_segment);
+    /*
     segments[0] = instance_create(x+0, y-0, obj_segment);
     segments[1] = instance_create(x+1, y-0, obj_segment);
     segments[2] = instance_create(x+1, y-1, obj_segment);    
     segments[3] = instance_create(x+2, y-1, obj_segment);
+    */
 }
 else if(type == "z")
 {
+    x = 3;
+    y = 4;
+    
     c = global.red; //Color
     m_c = merge_color(c, c_white, m_b_a); //Moving color
     g_c = merge_color(c, c_white, g_b_a); //Ghost color
     
+    segments[0] = instance_create(x+0, y+0, obj_segment);
+    segments[1] = instance_create(x+1, y+0, obj_segment);
+    segments[2] = instance_create(x+1, y+1, obj_segment);  
+    segments[3] = instance_create(x+2, y+1, obj_segment);
+    /*
     segments[0] = instance_create(x+0, y-1, obj_segment);
     segments[1] = instance_create(x+1, y-1, obj_segment);
     segments[2] = instance_create(x+1, y-0, obj_segment);  
     segments[3] = instance_create(x+2, y-0, obj_segment);
+    */
 }
 else if(type == "l")
 {
+    x = 3;
+    y = 4;
+
     c = global.orange; //Color
     m_c = merge_color(c, c_white, m_b_a); //Moving color
     g_c = merge_color(c, c_white, g_b_a); //Ghost color
 
+    segments[0] = instance_create(x+0, y+1, obj_segment);
+    segments[1] = instance_create(x+0, y+0, obj_segment);
+    segments[2] = instance_create(x+1, y+0, obj_segment);   
+    segments[3] = instance_create(x+2, y+0, obj_segment);
+    
+    rot = 90;
+    /*
     segments[0] = instance_create(x+0, y-1, obj_segment);
     segments[1] = instance_create(x+1, y-1, obj_segment);
     segments[2] = instance_create(x+1, y+0, obj_segment);   
     segments[3] = instance_create(x+1, y+1, obj_segment);
     
     rot = 180;
+    */
 }
 else if(type == "rl")
 {
+    x = 3;
+    y = 4;
+    
     c = global.dBlue; //Color
     m_c = merge_color(c, c_white, m_b_a); //Moving color
     g_c = merge_color(c, c_white, g_b_a); //Ghost color
 
-    rot = 180;
+    
+    segments[0] = instance_create(x+2, y+1, obj_segment);
+    segments[1] = instance_create(x+2, y+0, obj_segment);
+    segments[2] = instance_create(x+1, y+0, obj_segment);  
+    segments[3] = instance_create(x+0, y+0, obj_segment);
+    
+    rot = 270;
+    /*
     segments[0] = instance_create(x+2, y-1, obj_segment);
     segments[1] = instance_create(x+1, y-1, obj_segment);
     segments[2] = instance_create(x+1, y+0, obj_segment);  
     segments[3] = instance_create(x+1, y+1, obj_segment);
+    
+    rot = 180;
+    */
 }
 else if(type == "t")
 {
+    x = 3;
+    y = 4;
+    
     c = global.magenta; //Color
     m_c = merge_color(c, c_white, m_b_a); //Moving color
     g_c = merge_color(c, c_white, g_b_a); //Ghost color
 
+    segments[0] = instance_create(x+1, y+0, obj_segment);
+    segments[1] = instance_create(x+0, y+0, obj_segment);
+    segments[2] = instance_create(x+1, y+1, obj_segment);
+    segments[3] = instance_create(x+2, y+0, obj_segment);
+    /*
     segments[0] = instance_create(x+0, y+0, obj_segment);
     segments[1] = instance_create(x-1, y+0, obj_segment);
     segments[2] = instance_create(x+0, y+1, obj_segment);
     segments[3] = instance_create(x+1, y+0, obj_segment);
+    */
 }
+
+ghostX = x;
+ghostY = y;
+
 for(i = 0; i &lt; 4; i++)
 {
     ghosts[i] = instance_create(segments[i].x, segments[i].y, obj_ghostSeg);
@@ -183,7 +250,7 @@ for(i = 0; i &lt; 4; i++)
     segments[i].active_color = m_c;
 }
 
-//LOSS
+//LOSS CHECK
 for(var i = 0; i &lt; 4; i++)
 {
     if(global.segArr[segments[i].x, segments[i].y] != noone)
@@ -386,7 +453,6 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
             for(var i = 0; i &lt; 4; i++) { segments[i].y += amt; }  
         }  
         
-        print(string(current_time) + ":  AMT: " + string(amt));
         IG -= amt;
     }
 }

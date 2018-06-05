@@ -26,6 +26,7 @@ defaults[? "GHOST"] = true;
 defaults[? "GRID"] = true;
 defaults[? "RAND_METHOD"] = "Bag";
 defaults[? "DEBUG_OVERLAY"] = false;
+defaults[? "DEBUG_COLORS"] = false;
 defaults[? "REFRESH_RATE"] = global.refresh_rates[0];
 defaults[? "RESOLUTION"] = global.resolutions[0];
 defaults[? "MUSIC_LEVEL"] = 100;
@@ -45,6 +46,7 @@ global.ghost = ini_read_real("UI", "GHOST", defaults[? "GHOST"]);
 global.grid = ini_read_real("UI", "GRID", defaults[? "GRID"]);
 global.rand_method = ini_read_string("GAMEPLAY", "RAND_METHOD", defaults[? "RAND_METHOD"]);
 global.debug_overlay = ini_read_real("DEBUG", "DEBUG_OVERLAY", defaults[? "DEBUG_OVERLAY"]);
+global.debug_colors = ini_read_real("DEBUG", "DEBUG_COLORS", defaults[? "DEBUG_OVERLAY"]);
 global.refresh_rate = ini_read_real("DISPLAY", "REFRESH_RATE", defaults[? "REFRESH_RATE"]);
 global.resolution = ini_read_string("DISPLAY", "RESOLUTION", defaults[? "RESOLUTION"]);
 global.music_level = ini_read_real("AUDIO", "MUSIC_LEVEL", defaults[? "MUSIC_LEVEL"]);
@@ -101,7 +103,7 @@ room_goto(rm_main_menu);</code>
   <clearDisplayBuffer>-1</clearDisplayBuffer>
   <makerSettings>
     <isSet>-1</isSet>
-    <w>968</w>
+    <w>1016</w>
     <h>600</h>
     <showGrid>-1</showGrid>
     <showObjects>-1</showObjects>

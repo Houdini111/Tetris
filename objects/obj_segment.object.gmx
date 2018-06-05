@@ -52,25 +52,27 @@ mask_index = sprite_index;
             <string>///Draw to surface, if neccessary
 if(!global.paused)
 {
+    if(global.debug_colors)
+    {   
+        if(parent.segments[0] == id) { draw_set_color(c_white); } 
+        if(parent.segments[1] == id) { draw_set_color(c_ltgray); }
+        if(parent.segments[2] == id) { draw_set_color(active_color); }
+        if(parent.segments[3] == id) { draw_set_color(c_black); }
+    }
+    else { draw_set_color(active_color); }
+    
     if(parent.moving) 
     { 
         surface_set_target(parent.surf);
-        draw_set_color(active_color);
-        //draw_rectangle((x-parent.x)*global.segmentSize+1, (y-parent.y)*global.segmentSize-1, (x-parent.x+1)*global.segmentSize, (y-parent.y-1)*global.segmentSize, false);
         draw_rectangle((x-parent.x)*global.segmentSize+1, (y-parent.y)*global.segmentSize, (x-parent.x+1)*global.segmentSize, (y-parent.y+1)*global.segmentSize-1, false);
-        //draw_rectangle(x-parent.x+1, y-parent.y-1, x+global.segmentSize-parent.x, y-global.segmentSize-parent.y, false);
-        surface_reset_target();
     } 
     else 
     { 
         surface_set_target(global.STATIC_SEGMENT_SURFACE);
-        draw_set_color(active_color);
-        //draw_rectangle(x*global.segmentSize+1, y*global.segmentSize-1, (x+1)*global.segmentSize, (y-1)*global.segmentSize, false);
         draw_rectangle(x*global.segmentSize+1, y*global.segmentSize, (x+1)*global.segmentSize, (y+1)*global.segmentSize-1, false);
-        //draw_rectangle(x+1, y-1, x+global.segmentSize, y-global.segmentSize, false);
-        visible = false;
-        surface_reset_target();
+        visible = false;;
     }
+    surface_reset_target();
 }
 </string>
           </argument>

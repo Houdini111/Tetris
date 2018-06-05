@@ -28,11 +28,7 @@ if((!instance_exists(argument0) or (!argument0.moving and !argument0.falling)) a
 { 
     //newPeice
     global.canSpawnNew = false;
-    var spawn_x = floor(global.BLOCKS_WIDE/2)-2;
-    var spawn_y = 3;
-    //var spawn_x = (room_width/2)-((room_width/2)%global.segmentSize)-(2*global.segmentSize);
-    //var spawn_y = room_height-view_hview[0];
-    global.active = instance_create(spawn_x , spawn_y, obj_piece);
+    global.active = instance_create(0 , 0, obj_piece);
 } 
 
 global.level++;

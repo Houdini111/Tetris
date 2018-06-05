@@ -7,6 +7,7 @@ ini_write_real("UI", "GHOST", global.ghost);
 ini_write_real("UI", "GRID", global.grid);
 ini_write_string("GAMEPLAY", "RAND_METHOD", global.rand_method);
 ini_write_real("DEBUG", "DEBUG_OVERLAY", global.debug_overlay);
+ini_write_real("DEBUG", "DEBUG_COLORS", global.debug_colors);
 ini_write_real("DISPLAY", "REFRESH_RATE", global.refresh_rate);
 ini_write_string("DISPLAY", "RESOLUTION", global.resolution);
 ini_write_real("AUDIO", "MUSIC_LEVEL", global.music_level);
