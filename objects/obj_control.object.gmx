@@ -220,7 +220,93 @@ if(global.rand_method == "Bag") { ds_list_destroy(global.bag); }
             <kind>1</kind>
             <string>average_fps = average_fps*0.99 + fps_real*0.01;
 if(benchmark) { ds_list_add(frames, delta_time); }
-//print(string(fps_real) + " | " + string(1000000/delta_time));
+
+
+if(global.in_p[? keys.menu])
+{
+    ///Pause
+    global.paused = !global.paused;
+    
+    if(global.paused)
+    {
+        audio_pause_sound(music);
+        global.timer_list = ds_list_create();
+        global.timer_list[| 0] = global.active.nonmovementTimer;
+            global.active.nonmovementTimer = -1;
+        global.timer_list[| 1] = global.active.sliderTimer;
+            global.active.sliderTimer = -1;
+        global.timer_list[| 2] = global.active.rotationTimer;
+            global.active.rotationTimer = -1;
+        global.timer_list[| 3] = global.active.fallingTimer;
+            global.active.fallingTimer = -1;
+        instance_activate_object(global.pause_menu);   
+    }
+    else
+    {
+        audio_resume_sound(music);
+        global.active.nonmovementTimer = global.timer_list[| 0];
+        global.active.sliderTimer = global.timer_list[| 1];
+        global.active.rotationTimer = global.timer_list[| 2];
+        global.active.fallingTimer = global.timer_list[| 3];
+        ds_list_destroy(global.timer_list);
+        reset_pause();
+        save_settings(true, true);
+        instance_deactivate_object(global.pause_menu);
+    }
+}
+else if(global.in[? keys.hold])
+{
+    if(canSwap and !global.paused and global.active != noone)
+    {
+        canSwap = false; 
+        
+        if( global.hold == " ")
+        {
+            global.hold = global.active.type;
+            
+            global.active.moving = false;
+            for(i = 0; i &lt; 4; i++)
+            {
+                instance_destroy(global.active.segments[i]);
+                instance_destroy(global.active.ghosts[i]);
+            }
+            instance_destroy(global.active);
+            
+            var snd = audio_play_sound(snd_bop, 10, false);
+            audio_sound_gain(snd, global.sfx_level/100, 0);
+            
+            //newPeice
+            global.canSpawnNew = false;
+            global.active = instance_create(0 , 0, obj_piece);
+        }
+        else 
+        {
+            tmp = global.hold;
+            global.hold = global.active.type;
+            
+            global.active.moving = false;
+            for(i = 0; i &lt; 4; i++)
+            {
+                instance_destroy(global.active.segments[i]);
+                instance_destroy(global.active.ghosts[i]);
+            }
+            instance_destroy(global.active);
+             
+            global.control.type = tmp;
+            
+            var snd = audio_play_sound(snd_bop, 10, false);
+            audio_sound_gain(snd, global.sfx_level/100, 0);
+            
+            //newPeice
+            global.canSpawnNew = false;
+            global.active = instance_create(0 , 0, obj_piece);
+        }
+        
+        with(obj_segment) { visible = true; } 
+    }
+}
+
+
 
 if(!global.hardDrop and hardDropTimer == -1) { hardDropTimer = 1/60; }
 if(hardDropTimer &gt; -1) 
@@ -245,13 +331,9 @@ if(!global.canSpawnNew)
         clearDelayTimer -= delta_time/1000000*60;
         if(clearDelayTimer &lt;= 0)
         {
-            //with(obj_phantomSeg) { visible = false; }
-            //with(obj_phantomSeg) { instance_destroy(); }
             instance_destroy(obj_phantomSeg);
             for(var _i = ds_list_size(global.clearedLines)-1; _i &gt;= 0; _i-- )
             {
-                //print(string(global.clearedLines[| _i]) + "   | REMAINING: " + string(_i) );
-                //moveLinesDown(global.clearedLines[| _i] + global.segmentSize*_i);
                 moveLinesDown(global.clearedLines[| _i]);
             }
             ds_list_clear(global.clearedLines);
@@ -261,8 +343,6 @@ if(!global.canSpawnNew)
                 with(obj_segment) { visible = true; } 
             }
             clearDelayTimer = -1;
-            
-            //if(surface_exists(global.STATIC_SEGMENT_SURFACE)) { surface_free(global.STATIC_SEGMENT_SURFACE); }
             
             global.canSpawnNew = false;
             global.active = instance_create(0 , 0, obj_piece);
@@ -279,22 +359,6 @@ if(!global.canSpawnNew)
         }
     }
 }
-/*
-if(spawnPieceTimer == -1) { spawnPieceTimer = 1/60; }
-if(spawnPieceTimer &gt; -1) 
-{ 
-    spawnPieceTimer -= delta_time/1000000*60; 
-    if(spawnPieceTimer &lt;= 0  and spawnPieceTimer != -1) 
-    { 
-        global.canSpawnNew = true;
-        spawnPieceTimer = -1; 
-    }
-}
-*/
-
-
-
-
 </string>
           </argument>
         </arguments>
@@ -495,29 +559,7 @@ if(!surface_exists(global.STATIC_SEGMENT_SURFACE))
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>//Debug Grid
-/*
-if(global.grid)
-{
-    draw_set_color(c_black);
-    //draw_set_alpha(0.3);
-    //VERTICAL
-    for(var _x = 0; _x &lt;= view_wport[0]; _x += global.segmentSize)
-    {
-        draw_line(_x, 0, _x, view_hport[0]);
-    }
-    //HORIZONTAL
-    for(var _y = 0; _y &lt;= view_hport[0]; _y += global.segmentSize)
-    {
-        draw_line(0, _y, view_wport[0], _y);
-    }
-    //draw_set_alpha(1);
-}
-*/
-//End Debug Grid
-
-
-draw_set_valign(fa_top);
+            <string>draw_set_valign(fa_top);
 draw_set_halign(fa_center);
 
 
@@ -640,78 +682,17 @@ if(global.debug_overlay)
     }
     draw_text_color_outline(10, view_hview[0]-10-string_height("DROP"), "DROP_TIME: " + string(hardDropTimer), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
     draw_text_color_outline(10, view_hview[0]-10, "CAN_HARD: " + boolean_replace(global.hardDrop, "oo"), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+     
+    draw_set_halign(fa_right);
+    draw_text_color_outline(view_wview[0]-10, 50, "MENU: " + string(global.in[? keys.menu]) + " | " + string(global.in_p[? keys.menu]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*1, "HOLD: " + string(global.in[? keys.hold]) + " | " + string(global.in_p[? keys.hold]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*2, "LEFT: " + string(global.in[? keys.left]) + " | " + string(global.in_p[? keys.left]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*3, "RIGHT: " + string(global.in[? keys.right]) + " | " + string(global.in_p[? keys.right]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*4, "CW: " + string(global.in[? keys.cw]) + " | " + string(global.in_p[? keys.cw]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*5, "CCW: " + string(global.in[? keys.ccw]) + " | " + string(global.in_p[? keys.ccw]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*6, "HD: " + string(global.in[? keys.hd]) + " | " + string(global.in_p[? keys.hd]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*7, "SD: " + string(global.in[? keys.sd]) + " | " + string(global.in_p[? keys.sd]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
 }
-
-
-/*
-draw_text(view_wport[0]+(UI_WIDTH/2), 220, "HOLD");
-if(!global.paused)
-{ 
-    spr = asset_get_index("spr_" + global.hold);
-    if(global.hold != " ") { draw_sprite(spr, 0, view_wport[0]+(UI_WIDTH/2)-(sprite_get_width(spr)/2), 240); }
-    if(!canSwap) 
-    { 
-        spr = asset_get_index("spr_x");
-        draw_sprite( spr, 0, view_wport[0]+(UI_WIDTH/2)-(sprite_get_width(spr)/2), 240); 
-    }
-}
-    
-draw_text(view_wport[0]+(UI_WIDTH/2), 310, "NEXT");
-if(!global.paused)
-{ 
-    if(global.rand_method == "Full")
-    {
-        for(i = 0; i &lt; global.previewCount; i++)
-        {
-            spr = asset_get_index("spr_" + preview[i]);
-            draw_sprite(spr, 0, view_wport[0]+(UI_WIDTH/2)-(sprite_get_width(spr)/2), 330+50*i); 
-        } 
-    }
-    else if(global.rand_method == "Bag")
-    {
-        for(i = 0; i &lt; global.previewCount; i++)
-        {
-            spr = asset_get_index("spr_" + global.bag[| i]);
-            draw_sprite(spr, 0, view_wport[0]+(UI_WIDTH/2)-(sprite_get_width(spr)/2), 330+50*i);  
-        }
-    }
-}
-
-draw_set_valign(fa_top);
-draw_set_halign(fa_left);
-
-
-if(global.debug_overlay)
-{
-    draw_set_valign(fa_bottom);
-    draw_set_halign(fa_left);
-    draw_set_font(my_font);
-    draw_set_color(c_white);
-    draw_text_color_outline(10, 50, "FPS_REAL: " + string(fps_real), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    draw_text_color_outline(10, 50 + string_height("FPS"), "FPS_AVG: " + string(average_fps), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    draw_text_color_outline(10, 50 + string_height("FPS")*2, "DISPLAY_FPS: " + string(1000000/delta_time), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    draw_text_color_outline(10, 50 + string_height("FPS")*3, "FRAME_TIME (ms): " + string_format(delta_time/1000, 5, 3), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    
-    if(global.active != noone)
-    {
-        draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*6, "CANFALL: " + string_format(global.active.canFall, 5, 3), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-        draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*5, "NONMOVE: " + string_format(global.active.nonmovementTimer, 5, 3), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-        draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*4, "ROTATE: " + string_format(global.active.rotationTimer, 5, 3), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-        draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*3, "FALLING: " + string_format(global.active.fallingTimer, 5, 3), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-        draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*2, "IG: " + string_format(global.active.IG, 5, 3), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    }
-    else
-    {
-        draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*6, "CANFALL: N/A" , c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-        draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*5, "NONMOVE: N/A", c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-        draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*4, "ROTATE: N/A", c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-        draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*3, "FALLING: N/A", c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-        draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*2, "IG: N/A", c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);  
-    }
-    draw_text_color_outline(10, view_hview[0]-10-string_height("DROP"), "DROP_TIME: " + string(hardDropTimer), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    draw_text_color_outline(10, view_hview[0]-10, "CAN_HARD: " + boolean_replace(global.hardDrop, "oo"), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-}
-*/
 </string>
           </argument>
         </arguments>
@@ -734,7 +715,9 @@ if(global.debug_overlay)
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///Pause
+            <string>///DEPRECATED
+/*
+///Pause
 global.paused = !global.paused;
 
 if(global.paused)
@@ -743,8 +726,6 @@ if(global.paused)
     global.timer_list = ds_list_create();
     global.timer_list[| 0] = global.active.nonmovementTimer;
         global.active.nonmovementTimer = -1;
-    //global.timer_list[| 1] = global.active.killTimer;
-    //    global.active.killTimer = -1;
     global.timer_list[| 1] = global.active.sliderTimer;
         global.active.sliderTimer = -1;
     global.timer_list[| 2] = global.active.rotationTimer;
@@ -757,7 +738,6 @@ else
 {
     audio_resume_sound(music);
     global.active.nonmovementTimer = global.timer_list[| 0];
-    //global.active.killTimer = global.timer_list[| 1];
     global.active.sliderTimer = global.timer_list[| 1];
     global.active.rotationTimer = global.timer_list[| 2];
     global.active.fallingTimer = global.timer_list[| 3];
@@ -766,6 +746,7 @@ else
     save_settings(true, true);
     instance_deactivate_object(global.pause_menu);
 }
+*/
 </string>
           </argument>
         </arguments>
@@ -788,7 +769,9 @@ else
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if(canSwap and !global.paused and global.active != noone)
+            <string>///DEPRECATED
+/*
+if(canSwap and !global.paused and global.active != noone)
 {
     canSwap = false; 
     
@@ -796,12 +779,9 @@ else
     {
         global.hold = global.active.type;
         
-        //global.active.killTimer = 1/60;
         global.active.moving = false;
         for(i = 0; i &lt; 4; i++)
         {
-            //global.active.segments[i].alarm[0] = 1;
-            //global.active.ghosts[i].alarm[0] = 1;
             instance_destroy(global.active.segments[i]);
             instance_destroy(global.active.ghosts[i]);
         }
@@ -819,12 +799,9 @@ else
         tmp = global.hold;
         global.hold = global.active.type;
         
-        //global.active.killTimer = 1/60;
         global.active.moving = false;
         for(i = 0; i &lt; 4; i++)
         {
-            //global.active.segments[i].alarm[0] = 1;
-            //global.active.ghosts[i].alarm[0] = 1;
             instance_destroy(global.active.segments[i]);
             instance_destroy(global.active.ghosts[i]);
         }
@@ -842,6 +819,7 @@ else
     
     with(obj_segment) { visible = true; } 
 }
+*/
 </string>
           </argument>
         </arguments>

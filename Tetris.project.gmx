@@ -373,6 +373,7 @@
     <object>objects\obj_segment</object>
     <object>objects\obj_ghostSeg</object>
     <object>objects\obj_phantomSeg</object>
+    <object>objects\obj_input_handler</object>
     <objects name="menus">
       <object>objects\obj_menu</object>
       <object>objects\obj_pause_menu</object>

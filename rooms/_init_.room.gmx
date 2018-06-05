@@ -96,14 +96,14 @@ for(i = 1; i &lt;= room_last; i++)
 surface_resize(application_surface, global.WINDOW_WIDTH, global.VISIBLE_HEIGHT);
 window_set_size(global.WINDOW_WIDTH, global.WINDOW_HEIGHT);
 
-
+instance_create(0, 0, obj_input_handler);
 room_goto(rm_main_menu);</code>
   <enableViews>0</enableViews>
   <clearViewBackground>-1</clearViewBackground>
   <clearDisplayBuffer>-1</clearDisplayBuffer>
   <makerSettings>
     <isSet>-1</isSet>
-    <w>1016</w>
+    <w>1008</w>
     <h>600</h>
     <showGrid>-1</showGrid>
     <showObjects>-1</showObjects>
