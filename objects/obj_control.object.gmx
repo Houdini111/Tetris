@@ -231,23 +231,29 @@ if(global.in_p[? keys.menu])
     {
         audio_pause_sound(music);
         global.timer_list = ds_list_create();
-        global.timer_list[| 0] = global.active.nonmovementTimer;
-            global.active.nonmovementTimer = -1;
-        global.timer_list[| 1] = global.active.sliderTimer;
-            global.active.sliderTimer = -1;
-        global.timer_list[| 2] = global.active.rotationTimer;
-            global.active.rotationTimer = -1;
-        global.timer_list[| 3] = global.active.fallingTimer;
-            global.active.fallingTimer = -1;
-        instance_activate_object(global.pause_menu);   
+        if(global.active != noone)
+        {
+            global.timer_list[| 0] = global.active.nonmovementTimer;
+                global.active.nonmovementTimer = -1;
+            global.timer_list[| 1] = global.active.sliderTimer;
+                global.active.sliderTimer = -1;
+            global.timer_list[| 2] = global.active.rotationTimer;
+                global.active.rotationTimer = -1;
+            global.timer_list[| 3] = global.active.fallingTimer;
+                global.active.fallingTimer = -1;
+            instance_activate_object(global.pause_menu);   
+        }
     }
     else
     {
         audio_resume_sound(music);
-        global.active.nonmovementTimer = global.timer_list[| 0];
-        global.active.sliderTimer = global.timer_list[| 1];
-        global.active.rotationTimer = global.timer_list[| 2];
-        global.active.fallingTimer = global.timer_list[| 3];
+        if(global.active == noone)
+        {
+            global.active.nonmovementTimer = global.timer_list[| 0];
+            global.active.sliderTimer = global.timer_list[| 1];
+            global.active.rotationTimer = global.timer_list[| 2];
+            global.active.fallingTimer = global.timer_list[| 3];
+        }
         ds_list_destroy(global.timer_list);
         reset_pause();
         save_settings(true, true);

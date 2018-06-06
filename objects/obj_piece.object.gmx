@@ -1790,7 +1790,7 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
         {
             if(canFall == true) { rotationTimer = -1; }
             else { rotationTimer = global.SOLIDIFY_TIME*global.ROTATION_SOLIDIFY_MODIFIER; }
-            updateGhost();  //THIS IS THE IDEAL PLACE, BUT UNTIL I FIX KICKING, THIS WON'T WORK
+            updateGhost();
         }
     }
     

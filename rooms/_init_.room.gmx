@@ -10,8 +10,7 @@
   <persistent>0</persistent>
   <colour>12632256</colour>
   <showcolour>0</showcolour>
-  <code>//global.segmentSize = sprite_get_width(asset_get_index("spr_segment"));
-global.segmentSize = 30;
+  <code>global.segmentSize = 30;
 global.refresh_rates = array(60, 75, 100, 120, 144);
 global.resolutions = array( "1024 x 768", "1280 x 720", "1280 x 800", "1280 x 1024", 
                             "1360 x 768", "1366 x 768", "1440 x 900", "1536 x 864",
@@ -37,7 +36,6 @@ defaults[? "CLEAR_SPEED"] = 0.1; //Tenths of a second
 global.BLOCKS_WIDE = 0;
 global.BLOCKS_TALL = 0;
 
-
 ini_open("settings.ini");
 global.BLOCKS_WIDE = ini_read_real("BOARD", "BLOCKS_WIDE", defaults[? "BLOCKS_WIDE"] );
 global.BLOCKS_TALL = ini_read_real("BOARD", "BLOCKS_TALL", defaults[? "BLOCKS_TALL"]);
@@ -52,8 +50,10 @@ global.resolution = ini_read_string("DISPLAY", "RESOLUTION", defaults[? "RESOLUT
 global.music_level = ini_read_real("AUDIO", "MUSIC_LEVEL", defaults[? "MUSIC_LEVEL"]);
 global.sfx_level = ini_read_real("AUDIO", "SFX_LEVEL", defaults[? "SFX_LEVEL"]);
 global.clear_speed = ini_read_real("GAMEPLAY", "CLEAR_SPEED", defaults[? "CLEAR_SPEED"]);
-save_settings(false, false);
 ini_close();
+
+instance_create(0, 0, obj_input_handler);
+save_settings(true, true);
 
 ds_map_destroy(defaults);
 
@@ -96,14 +96,14 @@ for(i = 1; i &lt;= room_last; i++)
 surface_resize(application_surface, global.WINDOW_WIDTH, global.VISIBLE_HEIGHT);
 window_set_size(global.WINDOW_WIDTH, global.WINDOW_HEIGHT);
 
-instance_create(0, 0, obj_input_handler);
+
 room_goto(rm_main_menu);</code>
   <enableViews>0</enableViews>
   <clearViewBackground>-1</clearViewBackground>
   <clearDisplayBuffer>-1</clearDisplayBuffer>
   <makerSettings>
     <isSet>-1</isSet>
-    <w>1008</w>
+    <w>984</w>
     <h>600</h>
     <showGrid>-1</showGrid>
     <showObjects>-1</showObjects>
@@ -114,8 +114,8 @@ room_goto(rm_main_menu);</code>
     <deleteUnderlyingObj>0</deleteUnderlyingObj>
     <deleteUnderlyingTiles>-1</deleteUnderlyingTiles>
     <page>1</page>
-    <xoffset>-371</xoffset>
-    <yoffset>-239</yoffset>
+    <xoffset>-209</xoffset>
+    <yoffset>-441</yoffset>
   </makerSettings>
   <backgrounds>
     <background visible="0" foreground="0" name="" x="0" y="0" htiled="-1" vtiled="-1" hspeed="0" vspeed="0" stretch="0"/>

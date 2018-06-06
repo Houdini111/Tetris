@@ -41,6 +41,7 @@ views[? "sound_y"] = h;
 
 
 area = "main";
+last_area = area;
 
 selection = 0;
 
@@ -162,6 +163,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
             else if(selection == 1)  //Options
             { 
                 selection = 0 ;
+                last_area = area;
                 area = "options"; 
                 goal_x = views[? area+"_x"];
                 goal_y = views[? area+"_y"];
@@ -181,6 +183,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
         {
             if(selection == 0)
             {
+                last_area = area;
                 area = "main";
                 selection = 0;
                 goal_x = views[? area+"_x"];
@@ -201,6 +204,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
             }
             else if(selection == 4) //Controls
             {
+                last_area = area;
                 area = "controls";
                 selection = 0;
                 goal_x = views[? area+"_x"];
@@ -210,6 +214,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
             }
             else if(selection == 5) //Display 
             {
+                area = last_area;
                 area = "display";
                 selection = 0;
                 goal_x = views[? area+"_x"];
@@ -219,6 +224,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
             }  
             else if(selection == 6) //Sound 
             {
+                area = last_area;
                 area = "sound";
                 selection = 0;
                 goal_x = views[? area+"_x"];
@@ -239,6 +245,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
             if(selection == 0)
             {
                 selection = 0 ; 
+                area = last_area;
                 area = "options"; 
                 goal_x = views[? area+"_x"];
                 goal_y = views[? area+"_y"];
@@ -258,6 +265,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
             if(selection == 0) //Go Back
             {
                 selection = 0 ; 
+                area = last_area;
                 area = "options"; 
                 goal_x = views[? area+"_x"];
                 goal_y = views[? area+"_y"];
@@ -312,6 +320,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
             if(selection == 0)
             {
                 selection = 0 ; 
+                area = last_area;
                 area = "options"; 
                 goal_x = views[? area+"_x"];
                 goal_y = views[? area+"_y"];
@@ -397,105 +406,116 @@ if(goal_x == x and goal_y = y)
     }
 }
 
-
 draw_set_color(c_black);
 
-draw_set_font(main[|0]);
-for(i = 0; i &lt; ds_list_size(main)-1; i++)
+//MAIN
+if(area == "main" or (last_area == "main" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
 {
-    draw_text(w/2-x, h/2+large_height*i-y, main[|i+1]);
+    draw_set_font(main[|0]);
+    for(i = 0; i &lt; ds_list_size(main)-1; i++)
+    {
+        draw_text(w/2-x, h/2+large_height*i-y, main[|i+1]);
+    }
 }
-
 
 //OPTIONS
-draw_set_font(my_huge_font);
-draw_text(w/2+w-x, string_height("OPTIONS")*1.5*(1+PADDING) - y, "OPTIONS");
-draw_set_font(options[|0]);
-draw_set_halign(fa_left);
-for(i = 0; i &lt; ds_list_size(options)-1; i++)
+if(area == "options" or (last_area == "options" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
 {
-    draw_text(w*PADDING/2+w-x, h/3+large_height*i-y, options[|i+1]);
-    draw_set_halign(fa_right);
-    if(i == 0) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "Go Back"); }
-    else if(i == 1) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.grid, "oo")); }
-    else if(i == 2) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.ghost, "oo")); }
-    else if(i == 3) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, global.rand_method); }
-    else if(i == 4) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "&gt;"); }
-    else if(i == 5) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
-    else if(i == 6) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
+    draw_set_font(my_huge_font);
+    draw_text(w/2+w-x, string_height("OPTIONS")*1.5*(1+PADDING) - y, "OPTIONS");
+    draw_set_font(options[|0]);
     draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(options)-1; i++)
+    {
+        draw_text(w*PADDING/2+w-x, h/3+large_height*i-y, options[|i+1]);
+        draw_set_halign(fa_right);
+        if(i == 0) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "Go Back"); }
+        else if(i == 1) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.grid, "oo")); }
+        else if(i == 2) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.ghost, "oo")); }
+        else if(i == 3) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, global.rand_method); }
+        else if(i == 4) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "&gt;"); }
+        else if(i == 5) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
+        else if(i == 6) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
+        draw_set_halign(fa_left);
+    }
 }
-    
 
 //CONTROLS
-draw_set_font(my_huge_font);
-draw_set_halign(fa_center);
-draw_text(w/2+w*2-x, string_height("CONTROLS")*1.5*(1+PADDING - y), "CONTROLS");
-if(!surface_exists(controls_surface)) { controls_surface = generate_controls_surface(); }
-var surf_offset = 0;
-var surf_y = h/3-large_height*0.5;
-triangle_w = 15;
-triangle_h = 15;
-if(selection &gt; CONTROL_PAGE_NUMBER) 
-{ 
-    surf_offset = selection - CONTROL_PAGE_NUMBER; 
-
-    draw_set_color(c_black);
-    draw_triangle(  w*2+w/2-x-triangle_w/2, surf_y-10,
-                    w*2+w/2-x, surf_y-10-triangle_h,
-                    w*2+w/2-x+triangle_w/2, surf_y-10,
-                    false);
-}
-else
+if(area == "controls" or (last_area == "controls" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
 {
-    draw_set_color(c_black);
-    draw_triangle(  w*2+w/2-x-triangle_w/2, view_hview[0]-20-triangle_h,
-                    w*2+w/2-x, view_hview[0]-20,
-                    w*2+w/2-x+triangle_w/2, view_hview[0]-20-triangle_h,
-                    false);
-}
-var temp_surf = surface_create( surface_get_width(controls_surface), (CONTROL_PAGE_NUMBER+1)*large_height);
-surface_copy_part(temp_surf, 0, 0, controls_surface, 0, surf_offset*large_height, surface_get_width(controls_surface), room_height-surf_y);
-draw_surface(temp_surf, w*2-x+w*PADDING/2, surf_y);
-surface_free(temp_surf);
-
-
-//DISPLAY
-draw_set_font(my_huge_font);
-draw_set_halign(fa_center);
-draw_text(w-x+w/2, string_height("OPTIONS")*1.5*(1+PADDING)-h-y, "DISPLAY OPTIONS");
-draw_set_font(display[|0]);
-draw_set_halign(fa_left);
-for(i = 0; i &lt; ds_list_size(display)-1; i++)
-{
-    draw_text(w+w*PADDING/2-x, -y-h+h/3+large_height*i, display[|i+1]);
-    draw_set_halign(fa_right);
-    if(i == 0) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, "Go Back"); }
-    else if(i == 1) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, string(global.resolution)); }
-    else if(i == 2) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, string(global.refresh_rate)); }
-    else if(i == 3) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.debug_overlay, "oo")); }
-    draw_set_halign(fa_left);
-} 
-
-
-
-//DISPLAY
-draw_set_font(my_huge_font);
-draw_set_halign(fa_center);
-draw_text(w-x+w/2, string_height("OPTIONS")*1.5*(1+PADDING)+h-y, "AUDIO OPTIONS");
-draw_set_font(sound[|0]);
-draw_set_halign(fa_left);
-for(i = 0; i &lt; ds_list_size(sound)-1; i++)
-{
-    draw_text(w+w*PADDING/2-x, -y+h+h/3+large_height*i, sound[|i+1]);
-    draw_set_halign(fa_right);
-    if(i == 0) { draw_text(w*2-w*PADDING/2-x, -y+h+h/3+large_height*i, "Go Back"); }
-    else if(i == 1) { draw_text(w*2-w*PADDING/2-x, -y+h+h/3+large_height*i, string(global.music_level)); }
-    else if(i == 2) { draw_text(w*2-w*PADDING/2-x, -y+h+h/3+large_height*i, string(global.sfx_level)); }
-//    else if(i == 3) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.debug_overlay, "oo")); }
-    draw_set_halign(fa_left);
-} 
+    draw_set_font(my_huge_font);
+    draw_set_halign(fa_center);
+    draw_text(w/2+w*2-x, string_height("CONTROLS")*1.5*(1+PADDING - y), "CONTROLS");
+    if(!surface_exists(controls_surface)) { controls_surface = generate_controls_surface(); }
+    var surf_offset = 0;
+    var surf_y = h/3-large_height*0.5;
+    triangle_w = 15;
+    triangle_h = 15;
+    if(selection &gt; CONTROL_PAGE_NUMBER) 
+    { 
+        surf_offset = selection - CONTROL_PAGE_NUMBER; 
     
+        draw_set_color(c_black);
+        draw_triangle(  w*2+w/2-x-triangle_w/2, surf_y-10,
+                        w*2+w/2-x, surf_y-10-triangle_h,
+                        w*2+w/2-x+triangle_w/2, surf_y-10,
+                        false);
+    }
+    else
+    {
+        draw_set_color(c_black);
+        draw_triangle(  w*2+w/2-x-triangle_w/2, view_hview[0]-20-triangle_h,
+                        w*2+w/2-x, view_hview[0]-20,
+                        w*2+w/2-x+triangle_w/2, view_hview[0]-20-triangle_h,
+                        false);
+    }
+    var temp_surf = surface_create( surface_get_width(controls_surface), (CONTROL_PAGE_NUMBER+1)*large_height);
+    surface_copy_part(temp_surf, 0, 0, controls_surface, 0, surf_offset*large_height, surface_get_width(controls_surface), room_height-surf_y);
+    draw_surface(temp_surf, w*2-x+w*PADDING/2, surf_y);
+    surface_free(temp_surf);
+}
+
+
+//DISPLAY
+if(area == "display" or (last_area == "display" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(my_huge_font);
+    draw_set_halign(fa_center);
+    draw_text(w-x+w/2, string_height("OPTIONS")*1.5*(1+PADDING)-h-y, "DISPLAY OPTIONS");
+    draw_set_font(display[|0]);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(display)-1; i++)
+    {
+        draw_text(w+w*PADDING/2-x, -y-h+h/3+large_height*i, display[|i+1]);
+        draw_set_halign(fa_right);
+        if(i == 0) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, "Go Back"); }
+        else if(i == 1) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, string(global.resolution)); }
+        else if(i == 2) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, string(global.refresh_rate)); }
+        else if(i == 3) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.debug_overlay, "oo")); }
+        draw_set_halign(fa_left);
+    } 
+}
+
+
+//SOUND
+if(area == "sound" or (last_area == "sound" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(my_huge_font);
+    draw_set_halign(fa_center);
+    draw_text(w-x+w/2, string_height("OPTIONS")*1.5*(1+PADDING)+h-y, "AUDIO OPTIONS");
+    draw_set_font(sound[|0]);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(sound)-1; i++)
+    {
+        draw_text(w+w*PADDING/2-x, -y+h+h/3+large_height*i, sound[|i+1]);
+        draw_set_halign(fa_right);
+        if(i == 0) { draw_text(w*2-w*PADDING/2-x, -y+h+h/3+large_height*i, "Go Back"); }
+        else if(i == 1) { draw_text(w*2-w*PADDING/2-x, -y+h+h/3+large_height*i, string(global.music_level)); }
+        else if(i == 2) { draw_text(w*2-w*PADDING/2-x, -y+h+h/3+large_height*i, string(global.sfx_level)); }
+    //    else if(i == 3) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.debug_overlay, "oo")); }
+        draw_set_halign(fa_left);
+    } 
+}
     
     
 draw_set_valign(fa_top);
@@ -522,7 +542,6 @@ if(global.debug_overlay)
     draw_text_color_outline(10, view_hview[0]-10-string_height("GOAL_X"), "GOAL_Y: " + string(goal_y), c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
     draw_text_color_outline(10, view_hview[0]-10, "AREA: " + area, c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
 }
-
 </string>
           </argument>
         </arguments>
