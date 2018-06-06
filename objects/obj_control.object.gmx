@@ -150,15 +150,9 @@ room_surf = surface_create(room_width+1, room_height);
 grid_surf = surface_create(room_width+1, room_height); 
 surface_free(grid_surf); //Free so that the grid draw to create the lines will trigger
 
-/*
-if(global.ghost) 
-{
-    //global.ghostSurf = surface_create(1, 1);
-    //surface_free(global.ghostSurf);
-    global.ghostSurf = noone;
-}
-*/
+
 global.ghostSurf = noone;
+guiSurf = noone;
 
 for(var _x = global.BLOCKS_WIDE-1; _x &gt;= 0; _x--)
 {
@@ -460,9 +454,7 @@ if(!global.paused and global.active != noone)
     {
         draw_surface(global.ghostSurf, global.active.ghostX*global.segmentSize, global.active.ghostY*global.segmentSize); 
     }
-    //if(global.ghost) { draw_surface(global.ghostSurf, global.active.ghostX, global.active.ghostY); }
     draw_surface(global.active.surf, global.active.x*global.segmentSize, global.active.y*global.segmentSize);
-    //print("ACTIVE: " + string(global.active.x) + ", " + string(global.active.y));
     surface_reset_target();
 }
 
@@ -520,6 +512,8 @@ if(global.ghost and !surface_exists(global.ghostSurf))
     surface_reset_target();
 } 
 */
+if(global.ghost and !surface_exists(global.ghostSurf)) 
+    { with(global.active) { prepareGhostSurface(); } }
 
 if(global.grid and !surface_exists(grid_surf))
 {
@@ -568,41 +562,57 @@ if(!surface_exists(global.STATIC_SEGMENT_SURFACE))
             <string>draw_set_valign(fa_top);
 draw_set_halign(fa_center);
 
-
-draw_set_colour(c_white);
-draw_rectangle(0, 0, global.GUI_LEFT_SIZE-1, window_get_height(), false);
-draw_rectangle(window_get_width()-global.GUI_RIGHT_SIZE+1, 0, window_get_width(), window_get_height(), false);
-draw_set_color(c_black);
-
 right_center = window_get_width() - global.GUI_RIGHT_SIZE/2; 
 preview_size = 40;
 preview_padded = 50;
 
-//draw_text(right_center, 220, "HOLD");\
-draw_rectangle(right_center-preview_padded/2, 10, right_center+preview_padded/2, 10+preview_padded, true);
+fnt_height = 40;
+
+if(!surface_exists(guiSurf))
+{
+    draw_set_color(c_black);
+    guiSurf = surface_create(view_wview[0], view_hview[0]);
+    surface_set_target(guiSurf);
+    
+    draw_set_colour(c_white);
+    draw_rectangle(0, 0, global.GUI_LEFT_SIZE-1, window_get_height(), false);
+    draw_rectangle(window_get_width()-global.GUI_RIGHT_SIZE+1, 0, window_get_width(), window_get_height(), false);
+    
+    draw_set_color(c_black);
+    draw_rectangle(right_center-preview_padded/2, 10, right_center+preview_padded/2, 10+preview_padded, true);
+    draw_line_width(right_center - global.GUI_RIGHT_SIZE/2*0.8, preview_padded+20, right_center + global.GUI_RIGHT_SIZE/2*0.8, preview_padded+20, 3);
+    for(i = 0; i &lt; global.previewCount; i++)
+        { draw_rectangle(right_center-preview_padded/2, 30+preview_padded*(1+i), right_center+preview_padded/2, 30+preview_padded*(2+i), true); }
+        
+    draw_set_font(my_huge_font);
+    var txt_width = string_width("LINES");
+    var txt_height = string_height("LINES");
+    var scale = min((global.GUI_LEFT_SIZE-20)/txt_width, fnt_height/txt_height);
+    draw_text_transformed(global.GUI_LEFT_SIZE/2, 10, "LINES", scale, scale, 0);
+    
+    txt_height = string_height("LEVEL");
+    txt_width = string_width("LEVEL");
+    scale = min((global.GUI_LEFT_SIZE-20)/txt_width, fnt_height/txt_height);
+    draw_text_transformed(global.GUI_LEFT_SIZE/2, 45+fnt_height*2, "LEVEL", scale, scale, 0);
+    
+    surface_reset_target();
+}
+
+draw_surface(guiSurf, 0, 0);
+
 if(!global.paused)
 { 
+    draw_set_color(c_black);
     spr = asset_get_index("spr_" + global.hold);
-    //draw_rectangle(right_center-preview_padded/2, 10, right_center+preview_padded/2, 10+preview_padded, true);
     if(global.hold != " ") { draw_sprite(spr, 0, right_center-(sprite_get_width(spr)/2), 10+preview_padded/2-sprite_get_height(spr)/2); }
     if(!canSwap) 
     { 
         draw_set_color(c_red);
         draw_line_width(right_center-(preview_padded/2), 10+preview_padded/2-preview_padded/2, right_center+(preview_padded/2), 10+preview_padded/2+preview_padded/2, 3);
         draw_line_width(right_center+(preview_padded/2), 10+preview_padded/2-preview_padded/2, right_center-(preview_padded/2), 10+preview_padded/2+preview_padded/2, 3);
-        //spr = asset_get_index("spr_x");
-        //draw_sprite(spr, 0, right_center-(sprite_get_width(spr)/2), 10+preview_padded/2-sprite_get_height(spr)/2);
+        draw_set_color(c_black);
     }
-}
 
-draw_set_color(c_black);
-draw_line_width(right_center - global.GUI_RIGHT_SIZE/2*0.8, preview_padded+20, right_center + global.GUI_RIGHT_SIZE/2*0.8, preview_padded+20, 3);
-    
-//draw_text(right_center, 310, "NEXT");
-for(i = 0; i &lt; global.previewCount; i++)
-    { draw_rectangle(right_center-preview_padded/2, 30+preview_padded*(1+i), right_center+preview_padded/2, 30+preview_padded*(2+i), true); }
-if(!global.paused)
-{ 
     if(global.rand_method == "Full")
     {
         for(i = 0; i &lt; global.previewCount; i++)
@@ -619,29 +629,14 @@ if(!global.paused)
             draw_sprite(spr, 0, right_center-(sprite_get_width(spr)/2), 30+preview_padded*(1.5+i)-sprite_get_height(spr)/2);
         }
     }
-}
 
-
-draw_set_font(my_huge_font);
-var fnt_height = 40;
-var txt_width = string_width("LINES");
-var txt_height = string_height("LINES");
-var scale = min((global.GUI_LEFT_SIZE-20)/txt_width, fnt_height/txt_height);
-draw_text_transformed(global.GUI_LEFT_SIZE/2, 10, "LINES", scale, scale, 0);
-if(!global.paused)
-{ 
-    txt_width = string_width(string(global.lines));
-    txt_height = string_height(string(global.lines));
-    scale = min((global.GUI_LEFT_SIZE-20)/txt_width, fnt_height/txt_height);
+    draw_set_font(my_huge_font);
+    
+    var txt_width = string_width(string(global.lines));
+    var txt_height = string_height(string(global.lines));
+    var scale = min((global.GUI_LEFT_SIZE-20)/txt_width, fnt_height/txt_height);
     draw_text_transformed(global.GUI_LEFT_SIZE/2, 15+fnt_height, string(global.lines), scale, scale, 0); 
-}
 
-txt_height = string_height("LEVEL");
-txt_width = string_width("LEVEL");
-var scale = min((global.GUI_LEFT_SIZE-20)/txt_width, fnt_height/txt_height);
-draw_text_transformed(global.GUI_LEFT_SIZE/2, 45+fnt_height*2, "LEVEL", scale, scale, 0);
-if(!global.paused)
-{ 
     txt_width = string_width(string(global.level));
     txt_height = string_height(string(global.lines));
     scale = min((global.GUI_LEFT_SIZE-20)/txt_width, fnt_height/txt_height);

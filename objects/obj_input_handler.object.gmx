@@ -43,13 +43,13 @@ enum gkeys
 enum mkeys
 {
     up = gkeys.length + 1, 
-    down = gkeys.length + 2, 
-    left = gkeys.length + 3,
-    right = gkeys.length + 4,
-    accept = gkeys.length + 5, 
-    back = gkeys.length + 6, 
-    menu = gkeys.length + 7, 
-    length  = gkeys.length + 8
+    down,
+    left,
+    right,
+    accept,
+    back,
+    menu,
+    length
 };
 enum in_modes
 {
@@ -126,6 +126,9 @@ ini_close();
 
 ds_map_destroy(default_map);
 ds_map_destroy(default_method);
+
+global.pads = noone;
+gp_check();
 </string>
           </argument>
         </arguments>

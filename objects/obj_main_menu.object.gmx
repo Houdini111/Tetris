@@ -34,6 +34,10 @@ views[? "options_x"] = w;
 views[? "options_y"] = 0;
 views[? "controls_x"] = w*2;
 views[? "controls_y"] = 0;
+views[? "gamecontrols_x"] = w*2;
+views[? "gamecontrols_y"] = -h;
+views[? "menucontrols_x"] = w*2;
+views[? "menucontrols_y"] = h;
 views[? "display_x"] = w;
 views[? "display_y"] = -h;
 views[? "sound_x"] = w;
@@ -69,6 +73,13 @@ sections[? "options"] = options;
 controls = ds_list_create();
 ds_list_add(controls, my_large_font);
 ds_list_add(controls, "&lt;");
+ds_list_add(controls, "Game Controls");
+ds_list_add(controls, "Menu Controls");
+sections[? "controls"] = controls;
+CONTROL_PAGE_NUMBER = 5;
+/*
+ds_list_add(controls, my_large_font);
+ds_list_add(controls, "&lt;");
 ds_list_add(controls, "Left");
 ds_list_add(controls, "Right");
 ds_list_add(controls, "CW");
@@ -79,8 +90,35 @@ ds_list_add(controls, "Hold");
 ds_list_add(controls, "Pause");
 sections[? "controls"] = controls;
 
-CONTROL_PAGE_NUMBER = 5;
-controls_surface = generate_controls_surface();
+//CONTROL_PAGE_NUMBER = 5;
+//controls_surface = generate_controls_surface();
+*/
+
+gamecontrols = ds_list_create();
+ds_list_add(gamecontrols, my_large_font);
+ds_list_add(gamecontrols, "&lt;");
+ds_list_add(gamecontrols, "Left");
+ds_list_add(gamecontrols, "Right");
+ds_list_add(gamecontrols, "CW");
+ds_list_add(gamecontrols, "CCW");
+ds_list_add(gamecontrols, "Hard");
+ds_list_add(gamecontrols, "Soft");
+ds_list_add(gamecontrols, "Hold");
+sections[? "gamecontrols"] = gamecontrols;
+
+
+menucontrols = ds_list_create();
+ds_list_add(menucontrols, my_large_font);
+ds_list_add(menucontrols, "&lt;");
+ds_list_add(menucontrols, "UP");
+ds_list_add(menucontrols, "DOWN");
+ds_list_add(menucontrols, "LEFT");
+ds_list_add(menucontrols, "RIGHT");
+ds_list_add(menucontrols, "ACCEPT");
+ds_list_add(menucontrols, "BACK");
+ds_list_add(menucontrols, "MENU");
+sections[? "menucontrols"] = menucontrols;
+
 
 
 display = ds_list_create();
@@ -89,7 +127,7 @@ ds_list_add(display, "Go Back");
 ds_list_add(display, "RES.");
 ds_list_add(display, "MAX FPS");
 ds_list_add(display, "Debug UI");
-sections[? "display"] = controls;
+sections[? "display"] = display;
 
 
 sound = ds_list_create();
@@ -97,7 +135,7 @@ ds_list_add(sound, my_large_font);
 ds_list_add(sound, "Go Back");
 ds_list_add(sound, "MUSIC");
 ds_list_add(sound, "SFX");
-sections[? "sound"] = controls;
+sections[? "sound"] = sound;
 </string>
           </argument>
         </arguments>
@@ -151,198 +189,279 @@ ds_list_destroy(display);
 
 if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance ) 
 {
-    if(global.in_p[? mkeys.up]) { selection--; } 
-    else if(global.in_p[? mkeys.down]) { selection++; }
-    /*
-    if(keyboard_check_pressed(vk_up)) { selection--; } 
-    else if(keyboard_check_pressed(vk_down)) { selection++; }
-    */
-    
-    if(area == "main")
+    if(!editmode)
     {
-        selection = clamp(selection, 0, ds_list_size(main)-2); //-2 beccause 0 stores font and because it's zero indexed
+        if(global.in_p[? mkeys.up]) { selection--; } 
+        else if(global.in_p[? mkeys.down]) { selection++; }
         
-        //if(keyboard_check_pressed(vk_space))
-        if(global.in_p[? mkeys.accept])
+        if(area == "main")
         {
-            if(selection == 0) { room_goto(game_board) } //Start Game 
-            else if(selection == 1)  //Options
-            { 
-                selection = 0 ;
-                last_area = area;
-                area = "options"; 
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
-            }
-            else if(selection == 2) { game_end(); } //Exit
-        }
-    }
-    else if(area == "options")
-    {
-        selection = clamp(selection, 0, ds_list_size(options)-2);
-        
-        //if(keyboard_check_pressed(vk_space))
-        if(global.in_p[? mkeys.accept])
-        {
-            if(selection == 0)
+            selection = clamp(selection, 0, ds_list_size(main)-2); //-2 beccause 0 stores font and because it's zero indexed
+            
+            if(global.in_p[? mkeys.accept])
             {
-                last_area = area;
-                area = "main";
-                selection = 0;
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
-            }
-            else if(selection == 1){ global.grid = !global.grid; } //Grid 
-            else if(selection == 2) //Ghost
-            { 
-                global.ghost = !global.ghost;
-                //with(obj_ghostSeg) { visible = global.ghost; }
-            } 
-            else if(selection == 3) //Random
-            {
-                if(global.rand_method == "Full") { global.rand_method = "Bag"; }
-                else if(global.rand_method == "Bag") { global.rand_method = "Full"; }
-            }
-            else if(selection == 4) //Controls
-            {
-                last_area = area;
-                area = "controls";
-                selection = 0;
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
-            }
-            else if(selection == 5) //Display 
-            {
-                area = last_area;
-                area = "display";
-                selection = 0;
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
-            }  
-            else if(selection == 6) //Sound 
-            {
-                area = last_area;
-                area = "sound";
-                selection = 0;
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
-            }  
-        }
-    }
-    else if(area == "controls")
-    {
-        selection = clamp(selection, 0, ds_list_size(controls)-2);
-        
-        //if(keyboard_check_pressed(vk_space))
-        if(global.in_p[? mkeys.accept])
-        {
-            if(selection == 0)
-            {
-                selection = 0 ; 
-                area = last_area;
-                area = "options"; 
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
+                if(selection == 0) { room_goto(game_board) } //Start Game 
+                else if(selection == 1)  //Options
+                { 
+                    selection = 0 ;
+                    last_area = area;
+                    area = "options"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 2) { game_end(); } //Exit
             }
         }
-    }
-    else if(area == "display")
-    {
-        selection = clamp(selection, 0, ds_list_size(controls)-2);
-        
-        //if(keyboard_check_pressed(vk_space))
-        if(global.in_p[? mkeys.accept])
+        else if(area == "options")
         {
-            if(selection == 0) //Go Back
+            selection = clamp(selection, 0, ds_list_size(options)-2);
+            
+            if(global.in_p[? mkeys.accept])
             {
-                selection = 0 ; 
-                area = last_area;
-                area = "options"; 
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
-            }
-            else if(selection == 1) // Resolution
-            {
-                for(var index = 0; index &lt; array_length_1d(global.resolutions); index++)
+                if(selection == 0)
                 {
-                    if(global.resolutions[index] == global.resolution)
-                    {
-                        index++;
-                        if(index == array_length_1d(global.resolutions)) 
-                            { global.resolution = global.resolutions[0]; }
-                        else { global.resolution = global.resolutions[index]; }
-                        // = global.resolution;
-                    }
+                    last_area = area;
+                    area = "main";
+                    selection = 0;
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 1){ global.grid = !global.grid; } //Grid 
+                else if(selection == 2) //Ghost
+                { 
+                    global.ghost = !global.ghost;
+                } 
+                else if(selection == 3) //Random
+                {
+                    if(global.rand_method == "Full") { global.rand_method = "Bag"; }
+                    else if(global.rand_method == "Bag") { global.rand_method = "Full"; }
+                }
+                else if(selection == 4) //Controls
+                {
+                    last_area = area;
+                    area = "controls";
+                    gp_check();
+                    selection = 0;
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 5) //Display 
+                {
+                    area = last_area;
+                    area = "display";
+                    selection = 0;
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }  
+                else if(selection == 6) //Sound 
+                {
+                    area = last_area;
+                    area = "sound";
+                    selection = 0;
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }  
+            }
+        }
+        else if(area == "controls")
+        {
+            selection = clamp(selection, 0, ds_list_size(controls)-2);
+            
+            if(global.in_p[? mkeys.accept])
+            {
+                if(selection == 0) //Back
+                {
+                    selection = 0; 
+                    area = last_area;
+                    area = "options"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 1) //Gamecontrols
+                {
+                    selection = 0; 
+                    area = last_area;
+                    area = "gamecontrols"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 2) //Menucontrols
+                {
+                    selection = 0; 
+                    area = last_area;
+                    area = "menucontrols"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                /*
+                else
+                {
+                    editmode = true;
+                    io_clear();
+                }
+                */
+            }
+        }
+        else if(area == "gamecontrols")
+        {
+            selection = clamp(selection, 0, ds_list_size(gamecontrols)-2);
+            
+            if(global.in_p[? mkeys.accept])
+            {
+                if(selection == 0) //Back
+                {
+                    selection = 0; 
+                    area = last_area;
+                    area = "controls"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
                 }
             }
-            else if(selection == 2) //Refresh Rate
+        }
+        else if(area == "menucontrols")
+        {
+            selection = clamp(selection, 0, ds_list_size(menucontrols)-2);
+            
+            if(global.in_p[? mkeys.accept])
             {
-                for(var index = 0; index &lt; array_length_1d(global.refresh_rates); index++)
+                if(selection == 0) //Back
                 {
-                    if(global.refresh_rates[index] == global.refresh_rate)
+                    selection = 0; 
+                    area = last_area;
+                    area = "controls"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+            }
+        }
+        else if(area == "display")
+        {
+            selection = clamp(selection, 0, ds_list_size(display)-2);
+            
+            if(global.in_p[? mkeys.accept])
+            {
+                if(selection == 0) //Go Back
+                {
+                    selection = 0 ; 
+                    area = last_area;
+                    area = "options"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 1) // Resolution
+                {
+                    for(var index = 0; index &lt; array_length_1d(global.resolutions); index++)
                     {
-                        index++;
-                        if(index == array_length_1d(global.refresh_rates)) 
-                            { global.refresh_rate = global.refresh_rates[0]; }
-                        else { global.refresh_rate = global.refresh_rates[index]; }
-                        room_speed = global.refresh_rate;
-                        MAX_SCROLL_SPEED = view_wport[0]*0.05*room_speed/60;
+                        if(global.resolutions[index] == global.resolution)
+                        {
+                            index++;
+                            if(index == array_length_1d(global.resolutions)) 
+                                { global.resolution = global.resolutions[0]; }
+                            else { global.resolution = global.resolutions[index]; }
+                            // = global.resolution;
+                        }
                     }
                 }
-            }  
-            else if(selection == 3)  //Debug overlay
-            {
-                global.debug_overlay = !global.debug_overlay; 
-                show_debug_overlay(global.debug_overlay); 
-                save_settings();
-            } 
+                else if(selection == 2) //Refresh Rate
+                {
+                    for(var index = 0; index &lt; array_length_1d(global.refresh_rates); index++)
+                    {
+                        if(global.refresh_rates[index] == global.refresh_rate)
+                        {
+                            index++;
+                            if(index == array_length_1d(global.refresh_rates)) 
+                                { global.refresh_rate = global.refresh_rates[0]; }
+                            else { global.refresh_rate = global.refresh_rates[index]; }
+                            room_speed = global.refresh_rate;
+                            MAX_SCROLL_SPEED = view_wport[0]*0.05*room_speed/60;
+                        }
+                    }
+                }  
+                else if(selection == 3)  //Debug overlay
+                {
+                    global.debug_overlay = !global.debug_overlay; 
+                    show_debug_overlay(global.debug_overlay); 
+                    save_settings();
+                } 
+            }
         }
-    }
-    else if(area == "sound")
-    {
-        selection = clamp(selection, 0, ds_list_size(sound)-2);
-        
-        //if(keyboard_check_pressed(vk_space))
-        if(global.in_p[? mkeys.accept])
+        else if(area == "sound")
         {
-            if(selection == 0) //Back
+            selection = clamp(selection, 0, ds_list_size(sound)-2);
+            
+            if(global.in_p[? mkeys.accept])
             {
-                selection = 0 ; 
-                area = last_area;
-                area = "options"; 
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
+                if(selection == 0) //Back
+                {
+                    selection = 0 ; 
+                    area = last_area;
+                    area = "options"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 1) //Music
+                {
+                    global.music_level += 5;
+                    if(global.music_level &gt;= 105) { global.music_level = 5; }
+                    save_settings();
+                }
+                else if(selection == 2) //SFX
+                {
+                    global.sfx_level += 5;
+                    if(global.sfx_level &gt;= 105) { global.sfx_level = 5; }
+                    save_settings();
+                }  
             }
-            else if(selection == 1) //Music
-            {
-                global.music_level += 5;
-                if(global.music_level &gt;= 105) { global.music_level = 5; }
-                save_settings();
-            }
-            else if(selection == 2) //SFX
-            {
-                global.sfx_level += 5;
-                if(global.sfx_level &gt;= 105) { global.sfx_level = 5; }
-                save_settings();
-            }  
         }
     }
+    else //Edit mode
+    {
+        if((area == "gamecontrols" or area == "menucontrols") and selection != 0)
+        {
+            if(keyboard_key != 0)
+            {
+                print("DEVICE: KB | KEY: " + string(keyboard_key));
+                editmode = false;
+            }
+            else if(ds_list_size(global.pads) &gt; 0)
+            {
+                for(var i = 0; i &lt; ds_list_size(global.pads); i++)
+                {
+                    //Check every input on pad
+                    edtimode = false;
+                }
+            }  
+            else if(mouse_button != 0)
+            {
+                print("DEVICE: MS | KEY: " + string(mouse_button));
+                editmode = false;
+            }
+        }
+    } 
 }
 
 
@@ -390,7 +509,8 @@ draw_set_valign(fa_middle);
 
 if(goal_x == x and goal_y = y)
 {
-    draw_set_color(c_teal);
+    if(!editmode) { draw_set_color(c_teal); } 
+    else { draw_set_color(c_red); }  
     draw_set_font( ds_list_find_value( sections[? area], 0) );
     if(area == "controls" and selection &gt; CONTROL_PAGE_NUMBER) 
     {
@@ -402,6 +522,8 @@ if(goal_x == x and goal_y = y)
         if(area == "main") { start_height = h/2; }
         else if(area == "options") { start_height = h/3; }
         else if(area == "controls") { start_height = h/3; }
+        else if(area == "gamecontrols") { start_height = h/3; }
+        else if(area == "menucontrols") { start_height = h/3; }
         else if(area == "display") { start_height = h/3; }
         else if(area == "sound") { start_height = h/3; }
         draw_rectangle( (w*PADDING/2), ((start_height)-(box_large_height/2)+(large_height*selection)), (w-(w*PADDING/2)), ((start_height)+(box_large_height/2)+(large_height*selection)), false);
@@ -448,6 +570,18 @@ if(area == "controls" or (last_area == "controls" and ( abs(x - goal_x) &gt; tol
     draw_set_font(my_huge_font);
     draw_set_halign(fa_center);
     draw_text(w/2+w*2-x, string_height("CONTROLS")*1.5*(1+PADDING - y), "CONTROLS");
+    draw_set_font(controls[|0]);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(controls)-1; i++)
+    {
+        draw_text(w*PADDING/2+w*2-x, h/3+large_height*i-y, controls[|i+1]);
+        draw_set_halign(fa_right);
+        if(i == 0) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "Go Back"); }
+        else if(i == 1) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
+        else if(i == 2) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
+        draw_set_halign(fa_left);
+    }
+    /*
     if(!surface_exists(controls_surface)) { controls_surface = generate_controls_surface(); }
     var surf_offset = 0;
     var surf_y = h/3-large_height*0.5;
@@ -475,6 +609,47 @@ if(area == "controls" or (last_area == "controls" and ( abs(x - goal_x) &gt; tol
     surface_copy_part(temp_surf, 0, 0, controls_surface, 0, surf_offset*large_height, surface_get_width(controls_surface), room_height-surf_y);
     draw_surface(temp_surf, w*2-x+w*PADDING/2, surf_y);
     surface_free(temp_surf);
+    */
+}
+
+
+//GAMECONTROLS
+if(area == "gamecontrols" or (last_area == "gamecontrols" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(my_huge_font);
+    draw_set_halign(fa_center);
+    draw_text(w/2+w*2-x, -h+string_height("CONTROLS")*1.5*(1+PADDING - y), "CONTROLS");
+    draw_set_font(gamecontrols[|0]);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(gamecontrols)-1; i++)
+    {
+        draw_text(w*PADDING/2+w*2-x, -h+h/3+large_height*i-y, gamecontrols[|i+1]);
+        draw_set_halign(fa_right);
+        if(i == 0) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, "Go Back"); }
+        //else if(i == 1) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
+        //else if(i == 2) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
+        draw_set_halign(fa_left);
+    }
+}
+
+
+//MENUCONTROLS
+if(area == "menucontrols" or (last_area == "menucontrols" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(my_huge_font);
+    draw_set_halign(fa_center);
+    draw_text(w/2+w*2-x, h+string_height("CONTROLS")*1.5*(1+PADDING - y), "CONTROLS");
+    draw_set_font(menucontrols[|0]);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(menucontrols)-1; i++)
+    {
+        draw_text(w*PADDING/2+w*2-x, h+h/3+large_height*i-y, menucontrols[|i+1]);
+        draw_set_halign(fa_right);
+        if(i == 0) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, "Go Back"); }
+        //else if(i == 1) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
+        //else if(i == 2) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
+        draw_set_halign(fa_left);
+    }
 }
 
 

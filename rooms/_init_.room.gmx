@@ -32,7 +32,6 @@ defaults[? "MUSIC_LEVEL"] = 100;
 defaults[? "SFX_LEVEL"] = 100;
 defaults[? "CLEAR_SPEED"] = 0.1; //Tenths of a second
 
-
 global.BLOCKS_WIDE = 0;
 global.BLOCKS_TALL = 0;
 
@@ -103,7 +102,7 @@ room_goto(rm_main_menu);</code>
   <clearDisplayBuffer>-1</clearDisplayBuffer>
   <makerSettings>
     <isSet>-1</isSet>
-    <w>984</w>
+    <w>1016</w>
     <h>600</h>
     <showGrid>-1</showGrid>
     <showObjects>-1</showObjects>

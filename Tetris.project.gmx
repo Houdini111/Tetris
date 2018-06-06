@@ -362,6 +362,7 @@
       <script>scripts\print.gml</script>
       <script>scripts\print_map.gml</script>
     </scripts>
+    <script>scripts\gp_check.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\my_font</font>
