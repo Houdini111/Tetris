@@ -109,13 +109,20 @@ sections[? "display"] = controls;
 
 if( x == goal_x and y == goal_y) 
 {
+    if(global.in_p[? mkeys.up]) { selection--; } 
+    else if(global.in_p[? mkeys.down]) { selection++; }
+    /*
+    if(keyboard_check_pressed(vk_up)) { selection--; } 
+    else if(keyboard_check_pressed(vk_down)) { selection++; }
+    */
     if(area == "main")
     {
-        if(keyboard_check_pressed(vk_up)) { selection--; } 
-        else if(keyboard_check_pressed(vk_down)) { selection++; }
         selection = clamp(selection, 0, ds_list_size(main)-1);
         
+        if(global.in_p[? mkeys.accept])
+        /*
         if(keyboard_check_pressed(vk_space))
+        */
         {
             if(selection == 0) { keyboard_key_press(vk_escape); } //Resume
             else if(selection == 1)  //Options
@@ -133,11 +140,10 @@ if( x == goal_x and y == goal_y)
     }
     else if(area == "options")
     {
-        if(keyboard_check_pressed(vk_up)) { selection--; } 
-        else if(keyboard_check_pressed(vk_down)) { selection++; }
         selection = clamp(selection, 0, ds_list_size(options)-2); //-2 beccause 0 stores font and because it's zero indexed
         
-        if(keyboard_check_pressed(vk_space))
+        //if(keyboard_check_pressed(vk_space))
+        if(global.in_p[? mkeys.accept])
         {
             if(selection == 0) //Go Back
             {
@@ -181,8 +187,8 @@ if( x == goal_x and y == goal_y)
     }
     else if(area == "controls")
     {
-        if(keyboard_check_pressed(vk_up)) { selection--; } 
-        else if(keyboard_check_pressed(vk_down)) { selection++; }
+        //if(keyboard_check_pressed(vk_up)) { selection--; } 
+        //else if(keyboard_check_pressed(vk_down)) { selection++; }
         selection = clamp(selection, 0, ds_list_size(controls)-2);
     }
 }

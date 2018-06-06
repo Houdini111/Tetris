@@ -222,7 +222,7 @@ if(global.rand_method == "Bag") { ds_list_destroy(global.bag); }
 if(benchmark) { ds_list_add(frames, delta_time); }
 
 
-if(global.in_p[? keys.menu])
+if(global.in_p[? mkeys.menu])
 {
     ///Pause
     global.paused = !global.paused;
@@ -260,7 +260,7 @@ if(global.in_p[? keys.menu])
         instance_deactivate_object(global.pause_menu);
     }
 }
-else if(global.in[? keys.hold])
+else if(global.in[? gkeys.hold])
 {
     if(canSwap and !global.paused and global.active != noone)
     {
@@ -690,142 +690,15 @@ if(global.debug_overlay)
     draw_text_color_outline(10, view_hview[0]-10, "CAN_HARD: " + boolean_replace(global.hardDrop, "oo"), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
      
     draw_set_halign(fa_right);
-    draw_text_color_outline(view_wview[0]-10, 50, "MENU: " + string(global.in[? keys.menu]) + " | " + string(global.in_p[? keys.menu]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*1, "HOLD: " + string(global.in[? keys.hold]) + " | " + string(global.in_p[? keys.hold]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*2, "LEFT: " + string(global.in[? keys.left]) + " | " + string(global.in_p[? keys.left]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*3, "RIGHT: " + string(global.in[? keys.right]) + " | " + string(global.in_p[? keys.right]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*4, "CW: " + string(global.in[? keys.cw]) + " | " + string(global.in_p[? keys.cw]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*5, "CCW: " + string(global.in[? keys.ccw]) + " | " + string(global.in_p[? keys.ccw]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*6, "HD: " + string(global.in[? keys.hd]) + " | " + string(global.in_p[? keys.hd]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
-    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*7, "SD: " + string(global.in[? keys.sd]) + " | " + string(global.in_p[? keys.sd]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50, "MENU: " + string(global.in[? mkeys.menu]) + " | " + string(global.in_p[? mkeys.menu]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*1, "HOLD: " + string(global.in[? gkeys.hold]) + " | " + string(global.in_p[? gkeys.hold]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*2, "LEFT: " + string(global.in[? gkeys.left]) + " | " + string(global.in_p[? gkeys.left]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*3, "RIGHT: " + string(global.in[? gkeys.right]) + " | " + string(global.in_p[? gkeys.right]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*4, "CW: " + string(global.in[? gkeys.cw]) + " | " + string(global.in_p[? gkeys.cw]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*5, "CCW: " + string(global.in[? gkeys.ccw]) + " | " + string(global.in_p[? gkeys.ccw]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*6, "HD: " + string(global.in[? gkeys.hd]) + " | " + string(global.in_p[? gkeys.hd]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(view_wview[0]-10, 50 + string_height("FPS")*7, "SD: " + string(global.in[? gkeys.sd]) + " | " + string(global.in_p[? gkeys.sd]), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
 }
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="9" enumb="27">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>///DEPRECATED
-/*
-///Pause
-global.paused = !global.paused;
-
-if(global.paused)
-{
-    audio_pause_sound(music);
-    global.timer_list = ds_list_create();
-    global.timer_list[| 0] = global.active.nonmovementTimer;
-        global.active.nonmovementTimer = -1;
-    global.timer_list[| 1] = global.active.sliderTimer;
-        global.active.sliderTimer = -1;
-    global.timer_list[| 2] = global.active.rotationTimer;
-        global.active.rotationTimer = -1;
-    global.timer_list[| 3] = global.active.fallingTimer;
-        global.active.fallingTimer = -1;
-    instance_activate_object(global.pause_menu);   
-}
-else
-{
-    audio_resume_sound(music);
-    global.active.nonmovementTimer = global.timer_list[| 0];
-    global.active.sliderTimer = global.timer_list[| 1];
-    global.active.rotationTimer = global.timer_list[| 2];
-    global.active.fallingTimer = global.timer_list[| 3];
-    ds_list_destroy(global.timer_list);
-    reset_pause();
-    save_settings(true, true);
-    instance_deactivate_object(global.pause_menu);
-}
-*/
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="9" enumb="16">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>///DEPRECATED
-/*
-if(canSwap and !global.paused and global.active != noone)
-{
-    canSwap = false; 
-    
-    if( global.hold == " ")
-    {
-        global.hold = global.active.type;
-        
-        global.active.moving = false;
-        for(i = 0; i &lt; 4; i++)
-        {
-            instance_destroy(global.active.segments[i]);
-            instance_destroy(global.active.ghosts[i]);
-        }
-        instance_destroy(global.active);
-        
-        var snd = audio_play_sound(snd_bop, 10, false);
-        audio_sound_gain(snd, global.sfx_level/100, 0);
-        
-        //newPeice
-        global.canSpawnNew = false;
-        global.active = instance_create(0 , 0, obj_piece);
-    }
-    else 
-    {
-        tmp = global.hold;
-        global.hold = global.active.type;
-        
-        global.active.moving = false;
-        for(i = 0; i &lt; 4; i++)
-        {
-            instance_destroy(global.active.segments[i]);
-            instance_destroy(global.active.ghosts[i]);
-        }
-        instance_destroy(global.active);
-         
-        global.control.type = tmp;
-        
-        var snd = audio_play_sound(snd_bop, 10, false);
-        audio_sound_gain(snd, global.sfx_level/100, 0);
-        
-        //newPeice
-        global.canSpawnNew = false;
-        global.active = instance_create(0 , 0, obj_piece);
-    }
-    
-    with(obj_segment) { visible = true; } 
-}
-*/
 </string>
           </argument>
         </arguments>

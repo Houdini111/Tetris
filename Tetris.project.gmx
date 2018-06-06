@@ -360,6 +360,7 @@
       <script>scripts\shift_list_left.gml</script>
       <script>scripts\array.gml</script>
       <script>scripts\print.gml</script>
+      <script>scripts\print_map.gml</script>
     </scripts>
   </scripts>
   <fonts name="fonts">

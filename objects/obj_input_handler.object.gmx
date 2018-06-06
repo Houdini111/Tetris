@@ -29,9 +29,8 @@
 global.in_method = ds_map_create();
 global.in = ds_map_create();
 global.in_p = ds_map_create();
-enum keys 
+enum gkeys 
 {
-    menu,
     hold,
     left,
     right,
@@ -40,6 +39,17 @@ enum keys
     hd,
     sd,
     length
+};
+enum mkeys
+{
+    up = gkeys.length + 1, 
+    down = gkeys.length + 2, 
+    left = gkeys.length + 3,
+    right = gkeys.length + 4,
+    accept = gkeys.length + 5, 
+    back = gkeys.length + 6, 
+    menu = gkeys.length + 7, 
+    length  = gkeys.length + 8
 };
 enum in_modes
 {
@@ -51,40 +61,67 @@ enum in_modes
 
 var default_map = ds_map_create();
 var default_method = ds_map_create();
-default_map[? keys.menu] = vk_escape;
-default_method[? keys.menu] = in_modes.kb;
-default_map[? keys.hold] = vk_shift;
-default_method[? keys.hold] = in_modes.kb;
-default_map[? keys.left] = vk_left;
-default_method[? keys.left] = in_modes.kb;
-default_map[? keys.right] = vk_right;
-default_method[? keys.right] = in_modes.kb;
-default_map[? keys.cw] = ord("S");
-default_method[? keys.cw] = in_modes.kb;
-default_map[? keys.ccw] = ord("A");
-default_method[? keys.ccw] = in_modes.kb;
-default_map[? keys.hd] = vk_space;
-default_method[? keys.hd] = in_modes.kb;
-default_map[? keys.sd] = vk_down;
-default_method[? keys.sd] = in_modes.kb;
+
+default_map[? gkeys.hold] = vk_shift;
+default_method[? gkeys.hold] = in_modes.kb;
+default_map[? gkeys.left] = vk_left;
+default_method[? gkeys.left] = in_modes.kb;
+default_map[? gkeys.right] = vk_right;
+default_method[? gkeys.right] = in_modes.kb;
+default_map[? gkeys.cw] = ord("S");
+default_method[? gkeys.cw] = in_modes.kb;
+default_map[? gkeys.ccw] = ord("A");
+default_method[? gkeys.ccw] = in_modes.kb;
+default_map[? gkeys.hd] = vk_space;
+default_method[? gkeys.hd] = in_modes.kb;
+default_map[? gkeys.sd] = vk_down;
+default_method[? gkeys.sd] = in_modes.kb;
+
+default_map[? mkeys.menu] = vk_escape;
+default_method[? mkeys.menu] = in_modes.kb;
+default_map[? mkeys.left] = vk_left;
+default_method[? mkeys.left] = in_modes.kb;
+default_map[? mkeys.right] = vk_right;
+default_method[? mkeys.right] = in_modes.kb;
+default_map[? mkeys.up] = vk_up;
+default_method[? mkeys.up] = in_modes.kb;
+default_map[? mkeys.down] = vk_down;
+default_method[? mkeys.down] = in_modes.kb;
+default_map[? mkeys.accept] = vk_space;
+default_method[? mkeys.accept] = in_modes.kb;
+default_map[? mkeys.back] = ord("A");
+default_method[? mkeys.back] = in_modes.kb;
 
 ini_open("settings.ini");
-global.in_map[? keys.menu] = ini_read_real("CONTROLS", "MENU", default_map[? keys.menu]);
-global.in_method[? keys.menu] = ini_read_real("CONTROLS", "MENU_METHOD", default_method[? keys.menu])
-global.in_map[? keys.hold] = ini_read_real("CONTROLS", "HOLD", default_map[? keys.hold]);
-global.in_method[? keys.hold] = ini_read_real("CONTROLS", "HOLD_METHOD", default_method[? keys.hold])
-global.in_map[? keys.left] = ini_read_real("CONTROLS", "LEFT", default_map[? keys.left]);
-global.in_method[? keys.left] = ini_read_real("CONTROLS", "LEFT_METHOD", default_method[? keys.left])
-global.in_map[? keys.right] = ini_read_real("CONTROLS", "RIGHT", default_map[? keys.right]);
-global.in_method[? keys.right] = ini_read_real("CONTROLS", "RIGHT_METHOD", default_method[? keys.right])
-global.in_map[? keys.cw] = ini_read_real("CONTROLS", "CW", default_map[? keys.cw]);
-global.in_method[? keys.cw] = ini_read_real("CONTROLS", "CW_METHOD", default_method[? keys.cw])
-global.in_map[? keys.ccw] = ini_read_real("CONTROLS", "CCW", default_map[? keys.ccw]);
-global.in_method[? keys.ccw] = ini_read_real("CONTROLS", "CCW_METHOD", default_method[? keys.ccw])
-global.in_map[? keys.hd] = ini_read_real("CONTROLS", "HD", default_map[? keys.hd]);
-global.in_method[? keys.hd] = ini_read_real("CONTROLS", "HD_METHOD", default_method[? keys.hd])
-global.in_map[? keys.sd] = ini_read_real("CONTROLS", "SD", default_map[? keys.sd]);
-global.in_method[? keys.sd] = ini_read_real("CONTROLS", "SD_METHOD", default_method[? keys.sd])
+global.in_map[? gkeys.hold] = ini_read_real("GAME_CONTROLS", "HOLD", default_map[? gkeys.hold]);
+global.in_method[? gkeys.hold] = ini_read_real("GAME_CONTROLS", "HOLD_METHOD", default_method[? gkeys.hold]);
+global.in_map[? gkeys.left] = ini_read_real("GAME_CONTROLS", "LEFT", default_map[? gkeys.left]);
+global.in_method[? gkeys.left] = ini_read_real("GAME_CONTROLS", "LEFT_METHOD", default_method[? gkeys.left]);
+global.in_map[? gkeys.right] = ini_read_real("GAME_CONTROLS", "RIGHT", default_map[? gkeys.right]);
+global.in_method[? gkeys.right] = ini_read_real("GAME_CONTROLS", "RIGHT_METHOD", default_method[? gkeys.right]);
+global.in_map[? gkeys.cw] = ini_read_real("GAME_CONTROLS", "CW", default_map[? gkeys.cw]);
+global.in_method[? gkeys.cw] = ini_read_real("GAME_CONTROLS", "CW_METHOD", default_method[? gkeys.cw]);
+global.in_map[? gkeys.ccw] = ini_read_real("GAME_CONTROLS", "CCW", default_map[? gkeys.ccw]);
+global.in_method[? gkeys.ccw] = ini_read_real("GAME_CONTROLS", "CCW_METHOD", default_method[? gkeys.ccw]);
+global.in_map[? gkeys.hd] = ini_read_real("GAME_CONTROLS", "HD", default_map[? gkeys.hd]);
+global.in_method[? gkeys.hd] = ini_read_real("GAME_CONTROLS", "HD_METHOD", default_method[? gkeys.hd]);
+global.in_map[? gkeys.sd] = ini_read_real("GAME_CONTROLS", "SD", default_map[? gkeys.sd]);
+global.in_method[? gkeys.sd] = ini_read_real("GAME_CONTROLS", "SD_METHOD", default_method[? gkeys.sd]);
+
+global.in_map[? mkeys.menu] = ini_read_real("MENU_CONTROLS", "MENU", default_map[? mkeys.menu]);
+global.in_method[? mkeys.menu] = ini_read_real("MENU_CONTROLS", "MENU_METHOD", default_method[? mkeys.menu]);
+global.in_map[? mkeys.left] = ini_read_real("MENU_CONTROLS", "LEFT", default_map[? mkeys.left]);
+global.in_method[? mkeys.left] = ini_read_real("MENU_CONTROLS", "LEFT_METHOD", default_method[? mkeys.left]);
+global.in_map[? mkeys.right] = ini_read_real("MENU_CONTROLS", "RIGHT", default_map[? mkeys.right]);
+global.in_method[? mkeys.right] = ini_read_real("MENU_CONTROLS", "RIGHT_METHOD", default_method[? mkeys.right]);
+global.in_map[? mkeys.up] = ini_read_real("MENU_CONTROLS", "UP", default_map[? mkeys.up]);
+global.in_method[? mkeys.up] = ini_read_real("MENU_CONTROLS", "UP_METHOD", default_method[? mkeys.up]);
+global.in_map[? mkeys.down] = ini_read_real("MENU_CONTROLS", "DOWN", default_map[? mkeys.down]);
+global.in_method[? mkeys.down] = ini_read_real("MENU_CONTROLS", "DOWN_METHOD", default_method[? mkeys.down]);
+global.in_map[? mkeys.accept] = ini_read_real("MENU_CONTROLS", "ACCEPT", default_map[? mkeys.accept]);
+global.in_method[? mkeys.accept] = ini_read_real("MENU_CONTROLS", "ACCEPT_METHOD", default_method[? mkeys.accept]);
+global.in_map[? mkeys.back] = ini_read_real("MENU_CONTROLS", "BACK", default_map[? mkeys.back]);
+global.in_method[? mkeys.back] = ini_read_real("MENU_CONTROLS", "BACK_METHOD", default_method[? mkeys.back]);
 ini_close();
 
 ds_map_destroy(default_map);
@@ -111,7 +148,7 @@ ds_map_destroy(default_method);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>for (var i = 0; i &lt; keys.length; i++)
+            <string>for (var i = 0; i &lt; mkeys.length; i++)
 {
     if(global.in_method[? i] == in_modes.kb) 
     { 
