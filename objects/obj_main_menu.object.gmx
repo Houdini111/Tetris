@@ -444,7 +444,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
         {
             if(keyboard_key != 0)
             {
-                print("DEVICE: KB | KEY: " + string(keyboard_key));
+                //print("DEVICE: KB | KEY: " + string(keyboard_key));
                 editmode = false;
             }
             else if(ds_list_size(global.pads) &gt; 0)
@@ -457,7 +457,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
             }  
             else if(mouse_button != 0)
             {
-                print("DEVICE: MS | KEY: " + string(mouse_button));
+                //print("DEVICE: MS | KEY: " + string(mouse_button));
                 editmode = false;
             }
         }
@@ -626,8 +626,13 @@ if(area == "gamecontrols" or (last_area == "gamecontrols" and ( abs(x - goal_x) 
         draw_text(w*PADDING/2+w*2-x, -h+h/3+large_height*i-y, gamecontrols[|i+1]);
         draw_set_halign(fa_right);
         if(i == 0) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, "Go Back"); }
-        //else if(i == 1) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
-        //else if(i == 2) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
+        else if(i == 1) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.left], global.in_method[? gkeys.left]) + " | " + string(device_to_string(global.in_method[? gkeys.left]))); }
+        else if(i == 2) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.right], global.in_method[? gkeys.right]) + " | " + string(device_to_string(global.in_method[? gkeys.right]))); }
+        else if(i == 3) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.cw], global.in_method[? gkeys.cw]) + " | " + string(device_to_string(global.in_method[? gkeys.cw]))); }
+        else if(i == 4) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.ccw], global.in_method[? gkeys.ccw]) + " | " + string(device_to_string(global.in_method[? gkeys.ccw]))); }
+        else if(i == 5) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hd], global.in_method[? gkeys.hd]) + " | " + string(device_to_string(global.in_method[? gkeys.hd]))); }
+        else if(i == 6) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.sd], global.in_method[? gkeys.sd]) + " | " + string(device_to_string(global.in_method[? gkeys.sd]))); }
+        else if(i == 7) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hold], global.in_method[? gkeys.hold]) + " | " + string(device_to_string(global.in_method[? gkeys.hold]))); }
         draw_set_halign(fa_left);
     }
 }
@@ -646,8 +651,13 @@ if(area == "menucontrols" or (last_area == "menucontrols" and ( abs(x - goal_x) 
         draw_text(w*PADDING/2+w*2-x, h+h/3+large_height*i-y, menucontrols[|i+1]);
         draw_set_halign(fa_right);
         if(i == 0) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, "Go Back"); }
-        //else if(i == 1) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
-        //else if(i == 2) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
+        else if(i == 1) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.up], global.in_method[? mkeys.up]) + " | " + string(device_to_string(global.in_method[? mkeys.up]))); }
+        else if(i == 2) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.down], global.in_method[? mkeys.down]) + " | " + string(device_to_string(global.in_method[? mkeys.down]))); }
+        else if(i == 3) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.left], global.in_method[? mkeys.left]) + " | " + string(device_to_string(global.in_method[? mkeys.left]))); }
+        else if(i == 4) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.right], global.in_method[? mkeys.right]) + " | " + string(device_to_string(global.in_method[? mkeys.right]))); }
+        else if(i == 5) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.accept], global.in_method[? mkeys.accept]) + " | " + string(device_to_string(global.in_method[? mkeys.accept]))); }
+        else if(i == 6) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.back], global.in_method[? mkeys.back]) + " | " + string(device_to_string(global.in_method[? mkeys.back]))); }
+        else if(i == 7) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.menu], global.in_method[? mkeys.menu]) + " | " + string(device_to_string(global.in_method[? mkeys.menu]))); }
         draw_set_halign(fa_left);
     }
 }

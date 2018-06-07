@@ -363,6 +363,8 @@
       <script>scripts\print_map.gml</script>
     </scripts>
     <script>scripts\gp_check.gml</script>
+    <script>scripts\device_to_string.gml</script>
+    <script>scripts\input_to_string.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\my_font</font>
