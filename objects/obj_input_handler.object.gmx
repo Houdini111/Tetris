@@ -31,13 +31,13 @@ global.in = ds_map_create();
 global.in_p = ds_map_create();
 enum gkeys 
 {
-    hold,
     left,
     right,
     cw,
     ccw,
     hd,
     sd,
+    hold,
     length
 };
 enum mkeys
@@ -157,6 +157,15 @@ gp_check();
     { 
         global.in[? i] = keyboard_check(global.in_map[? i]); 
         global.in_p[? i] = keyboard_check_pressed(global.in_map[? i]);
+    }
+    if(global.in_method[? i] == in_modes.gp) 
+    { 
+        
+    }
+    if(global.in_method[? i] == in_modes.mouse) 
+    { 
+        global.in[? i] = mouse_check_button(global.in_map[? i]); 
+        global.in_p[? i] = mouse_check_button_pressed(global.in_map[? i]);
     }
 }
 </string>

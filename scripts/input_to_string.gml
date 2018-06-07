@@ -6,24 +6,30 @@ if( argument1 == in_modes.kb )
     { 
         switch(argument0)
         {
-            case vk_left: return "LEFT ARROW";
-            case vk_right: return "RIGHT ARROW";
-            case vk_up: return "UP ARROW";
-            case vk_down: return "DOWN ARROW";
+            case vk_left: return "L ARR";
+            case vk_right: return "R ARR";
+            case vk_up: return "U ARR";
+            case vk_down: return "D ARR";
             case vk_enter: return "ENTER";
-            case vk_escape: return "ESCAPE";
+            case vk_escape: return "ESC";
             case vk_space: return "SPACE";
+            case vk_lshift: return "L SHFT";
+            case vk_rshift: return "R SHFT";
             case vk_shift: return "SHIFT";
-            case vk_control: return "CONTROL";
+            case vk_lcontrol: return "L CTRL";
+            case vk_rcontrol: return "R CTRL";
+            case vk_control: return "CTRL";
+            case vk_lalt: return "L ALT";
+            case vk_ralt: return "R ALT";
             case vk_alt: return "ALT";
-            case vk_backspace: return "BACKSPACE";
+            case vk_backspace: return "BKSPCE";
             case vk_tab: return "TAB";
             case vk_home: return "HOME";
             case vk_end: return "END";
-            case vk_delete: return "DELETE";
-            case vk_insert: return "INSERT";
-            case vk_pageup: return "PAGE UP";
-            case vk_pagedown: return "PAGE DOWN";
+            case vk_delete: return "DEL";
+            case vk_insert: return "INSRT";
+            case vk_pageup: return "PAGE U";
+            case vk_pagedown: return "PAGE D";
             case vk_pause: return "PAUSE";
             case vk_printscreen: return "PRT_SCR";
             case vk_f1: return "F1";
@@ -87,12 +93,12 @@ else if( argument1 == in_modes.mouse  )
 {
     switch(argument0)
     {
-        case mb_left: return "LEFT MOUSE";
-        case mb_middle: return "MIDDLE MOUSE";
-        case mb_right: return "RIGHT MOUSE";
+        case mb_left: return "L MOUSE";
+        case mb_middle: return "M MOUSE";
+        case mb_right: return "R MOUSE";
     }
     
 }
 
 
-return "UNKNOWN";
+return "?????";

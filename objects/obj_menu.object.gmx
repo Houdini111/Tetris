@@ -45,7 +45,7 @@ old_y = 0;
 transition_tween = TweenCreate(id);
 
 editmode = false;
-
+editready = false;
 
 draw_set_font(my_font);
 normal_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+PADDING); 

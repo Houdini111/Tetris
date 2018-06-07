@@ -334,6 +334,12 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                     old_x = x;
                     old_y = y;
                 }
+                else
+                {
+                    editmode = true;
+                    editready = false;
+                    io_clear(); 
+                }
             }
         }
         else if(area == "menucontrols")
@@ -351,6 +357,12 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                     goal_y = views[? area+"_y"];
                     old_x = x;
                     old_y = y;
+                }
+                else
+                {
+                    editmode = true;
+                    editready = false;
+                    io_clear();
                 }
             }
         }
@@ -440,25 +452,53 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
     }
     else //Edit mode
     {
-        if((area == "gamecontrols" or area == "menucontrols") and selection != 0)
+        if(!editready) { editready = true; } //A 1 frame delay 
+        else
         {
-            if(keyboard_key != 0)
+            if((area == "gamecontrols" or area == "menucontrols") and selection != 0)
             {
-                //print("DEVICE: KB | KEY: " + string(keyboard_key));
-                editmode = false;
-            }
-            else if(ds_list_size(global.pads) &gt; 0)
-            {
-                for(var i = 0; i &lt; ds_list_size(global.pads); i++)
+                if(keyboard_key != 0)
                 {
-                    //Check every input on pad
-                    edtimode = false;
+                    //print("DEVICE: KB | KEY: " + string(keyboard_key));
+                    if(area == "gamecontrols")
+                    {
+                        //print(string(selection - 1) + " SET TO " + input_to_string(keyboard_key, in_modes.kb));
+                        global.in_map[? selection - 1] = keyboard_key;
+                        global.in_method[? selection - 1] = in_modes.kb;
+                    }
+                    else if(area == "menucontrols")
+                    {
+                        //print(string(selection + gkeys.length) + " SET TO " + input_to_string(keyboard_key, in_modes.kb));
+                        global.in_map[? selection + gkeys.length] = keyboard_key;
+                        global.in_method[? selection + gkeys.length] = in_modes.kb;
+                    }
+                    editmode = false;
+                    save_settings();
                 }
-            }  
-            else if(mouse_button != 0)
-            {
-                //print("DEVICE: MS | KEY: " + string(mouse_button));
-                editmode = false;
+                else if(ds_list_size(global.pads) &gt; 0)
+                {
+                    for(var i = 0; i &lt; ds_list_size(global.pads); i++)
+                    {
+                        //Check every input on pad
+                        edtimode = false;
+                    }
+                }  
+                else if(mouse_button != 0)
+                {
+                    //print("DEVICE: MS | KEY: " + string(mouse_button));
+                    if(area == "gamecontrols")
+                    {
+                        global.in_map[? selection - 1] = mouse_button;
+                        global.in_method[? selection - 1] = in_modes.mouse;
+                    }
+                    else if(area == "menucontrols")
+                    {
+                        global.in_map[? selection + gkeys.length] = mouse_button;
+                        global.in_method[? selection + gkeys.length] = in_modes.mouse;
+                    }
+                    editmode = false;
+                    save_settings();
+                }
             }
         }
     } 
