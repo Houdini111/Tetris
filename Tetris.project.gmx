@@ -358,13 +358,14 @@
     </scripts>
     <scripts name="Utilities">
       <script>scripts\shift_list_left.gml</script>
+      <script>scripts\resolution_change.gml</script>
+      <script>scripts\input_to_string.gml</script>
+      <script>scripts\device_to_string.gml</script>
       <script>scripts\array.gml</script>
       <script>scripts\print.gml</script>
       <script>scripts\print_map.gml</script>
     </scripts>
     <script>scripts\gp_check.gml</script>
-    <script>scripts\device_to_string.gml</script>
-    <script>scripts\input_to_string.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\my_font</font>

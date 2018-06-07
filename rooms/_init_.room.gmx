@@ -10,8 +10,7 @@
   <persistent>0</persistent>
   <colour>12632256</colour>
   <showcolour>0</showcolour>
-  <code>global.segmentSize = 30;
-global.refresh_rates = array(60, 75, 100, 120, 144);
+  <code>global.refresh_rates = array(60, 75, 100, 120, 144);
 global.resolutions = array( "1024 x 768", "1280 x 720", "1280 x 800", "1280 x 1024", 
                             "1360 x 768", "1366 x 768", "1440 x 900", "1536 x 864",
                             "1600 x 900", "1680 x 1050", "1920 x 1080", "1920 x 1200",
@@ -51,6 +50,7 @@ global.sfx_level = ini_read_real("AUDIO", "SFX_LEVEL", defaults[? "SFX_LEVEL"]);
 global.clear_speed = ini_read_real("GAMEPLAY", "CLEAR_SPEED", defaults[? "CLEAR_SPEED"]);
 ini_close();
 
+
 instance_create(0, 0, obj_input_handler);
 save_settings(true, true);
 
@@ -61,40 +61,7 @@ show_debug_overlay(global.debug_overlay);
 global.GUI_LEFT_SIZE = 100; 
 global.GUI_RIGHT_SIZE = 70;
 
-global.VISIBLE_WIDTH = global.BLOCKS_WIDE*global.segmentSize;
-global.VISIBLE_HEIGHT = global.BLOCKS_TALL*global.segmentSize;
-
-ROOM_HEIGHT = global.VISIBLE_HEIGHT+(4*global.segmentSize);
-ROOM_WIDTH = global.VISIBLE_WIDTH;
-
-global.WINDOW_HEIGHT = global.VISIBLE_HEIGHT; //If any top or bottom UI is added, add it's size here
-global.WINDOW_WIDTH = ROOM_WIDTH+global.GUI_LEFT_SIZE+global.GUI_RIGHT_SIZE;
-
-for(i = 1; i &lt;= room_last; i++)
-{
-    if(room_exists(i))
-    {
-        room_set_height(i, ROOM_HEIGHT);
-        room_set_width(i, ROOM_WIDTH);
-        
-        room_set_view(i, 0, true, 
-            0, ROOM_HEIGHT-global.VISIBLE_HEIGHT, //View x,y 
-            global.WINDOW_WIDTH, global.VISIBLE_HEIGHT, //View w,h
-            0, 0,   //Port x,y
-            global.VISIBLE_WIDTH, global.VISIBLE_HEIGHT, //Port w,h
-            0, 0, 0, 0, -1 );
-    
-        room_set_view_enabled(i, true); 
-    }
-}
-    
-//show_debug_message(TOTAL_HEIGHT - global.HEIGHT);
-
-
-//surface_resize(application_surface, WINDOW_WIDTH, WINDOW_HEIGHT);
-surface_resize(application_surface, global.WINDOW_WIDTH, global.VISIBLE_HEIGHT);
-window_set_size(global.WINDOW_WIDTH, global.WINDOW_HEIGHT);
-
+resolution_change(global.resolution, true);
 
 room_goto(rm_main_menu);</code>
   <enableViews>0</enableViews>
@@ -102,7 +69,7 @@ room_goto(rm_main_menu);</code>
   <clearDisplayBuffer>-1</clearDisplayBuffer>
   <makerSettings>
     <isSet>-1</isSet>
-    <w>1016</w>
+    <w>992</w>
     <h>600</h>
     <showGrid>-1</showGrid>
     <showObjects>-1</showObjects>

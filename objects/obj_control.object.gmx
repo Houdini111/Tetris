@@ -460,9 +460,9 @@ if(!global.paused and global.active != noone)
 
 surface_set_target(room_surf);
 draw_surface(global.clear_surf, 0, 0);
-part_system_drawit(global.clear_part_system);
 draw_surface(global.STATIC_SEGMENT_SURFACE, 0, 0);
-if(global.grid) { draw_surface(grid_surf, 0, 0); }
+if(global.grid) { draw_surface(grid_surf, 0, global.segmentSize*4); }
+part_system_drawit(global.clear_part_system);
 surface_reset_target();
 
 
@@ -517,16 +517,19 @@ if(global.ghost and !surface_exists(global.ghostSurf))
 
 if(global.grid and !surface_exists(grid_surf))
 {
-    grid_surf = surface_create(room_width+1, room_height); 
+    //grid_surf = surface_create(room_width+1, room_height); 
+    var disp_w = global.BLOCKS_WIDE*global.segmentSize;
+    var disp_h = global.BLOCKS_TALL*global.segmentSize;
+    grid_surf = surface_create(disp_w+1, disp_h+1);
     surface_set_target(grid_surf);
     draw_clear_alpha(c_black, 0);
     //VERTICAL
     draw_set_color(c_black);
-    for(var _x = 0; _x &lt;= room_width; _x += global.segmentSize)
-        { draw_line(_x, 0, _x, room_height); }
+    for(var _x = 0; _x &lt;= disp_w; _x += global.segmentSize)
+        { draw_line(_x, 0, _x, disp_h); }
     //HORIZONTAL
-    for(var _y = 0; _y &lt;= room_height; _y += global.segmentSize)
-        { draw_line(0, _y, room_width, _y); }
+    for(var _y = 0; _y &lt;= disp_h; _y += global.segmentSize)
+        { draw_line(0, _y, disp_h, _y); }
     surface_reset_target();
 }
 
@@ -562,11 +565,15 @@ if(!surface_exists(global.STATIC_SEGMENT_SURFACE))
             <string>draw_set_valign(fa_top);
 draw_set_halign(fa_center);
 
-right_center = window_get_width() - global.GUI_RIGHT_SIZE/2; 
+GUI_LEFT_X = 0;
+GUI_RIGHT_X = GUI_LEFT_X + global.GUI_LEFT_SIZE + global.segmentSize*global.BLOCKS_WIDE + 1;
+
+right_center = GUI_RIGHT_X + global.GUI_RIGHT_SIZE/2; 
 preview_size = 40;
 preview_padded = 50;
 
 fnt_height = 40;
+
 
 if(!surface_exists(guiSurf))
 {
@@ -575,8 +582,10 @@ if(!surface_exists(guiSurf))
     surface_set_target(guiSurf);
     
     draw_set_colour(c_white);
-    draw_rectangle(0, 0, global.GUI_LEFT_SIZE-1, window_get_height(), false);
-    draw_rectangle(window_get_width()-global.GUI_RIGHT_SIZE+1, 0, window_get_width(), window_get_height(), false);
+    //draw_rectangle(0, 0, global.GUI_LEFT_SIZE-1, window_get_height(), false);
+    draw_rectangle(GUI_LEFT_X, 0, global.GUI_LEFT_SIZE-1, window_get_height(), false);
+    //draw_rectangle(window_get_width()-global.GUI_RIGHT_SIZE+1, 0, window_get_width(), window_get_height(), false);
+    draw_rectangle(GUI_RIGHT_X, 0, GUI_RIGHT_X+global.GUI_RIGHT_SIZE, window_get_height(), false);
     
     draw_set_color(c_black);
     draw_rectangle(right_center-preview_padded/2, 10, right_center+preview_padded/2, 10+preview_padded, true);
@@ -588,12 +597,14 @@ if(!surface_exists(guiSurf))
     var txt_width = string_width("LINES");
     var txt_height = string_height("LINES");
     var scale = min((global.GUI_LEFT_SIZE-20)/txt_width, fnt_height/txt_height);
-    draw_text_transformed(global.GUI_LEFT_SIZE/2, 10, "LINES", scale, scale, 0);
+    //draw_text_transformed(global.GUI_LEFT_SIZE/2, 10, "LINES", scale, scale, 0);
+    draw_text_transformed(GUI_LEFT_X+global.GUI_LEFT_SIZE/2, 10, "LINES", scale, scale, 0);
     
     txt_height = string_height("LEVEL");
     txt_width = string_width("LEVEL");
     scale = min((global.GUI_LEFT_SIZE-20)/txt_width, fnt_height/txt_height);
-    draw_text_transformed(global.GUI_LEFT_SIZE/2, 45+fnt_height*2, "LEVEL", scale, scale, 0);
+    //draw_text_transformed(global.GUI_LEFT_SIZE/2, 45+fnt_height*2, "LEVEL", scale, scale, 0);
+    draw_text_transformed(GUI_LEFT_X+global.GUI_LEFT_SIZE/2, 45+fnt_height*2, "LEVEL", scale, scale, 0);
     
     surface_reset_target();
 }
@@ -618,7 +629,7 @@ if(!global.paused)
         for(i = 0; i &lt; global.previewCount; i++)
         {
             spr = asset_get_index("spr_" + preview[i]);
-            draw_sprite(spr, 0, right_center-(sprite_get_width(spr)/2), 30+preview_padded*(1.5+i)+sprite_get_height(spr)/2); 
+            draw_sprite(spr, 0, right_center-(sprite_get_width(spr)/2), 30+preview_padded*(1.5+i)-sprite_get_height(spr)/2);
         } 
     }
     else if(global.rand_method == "Bag")

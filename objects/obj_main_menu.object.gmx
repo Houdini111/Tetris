@@ -230,15 +230,21 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                     old_x = x;
                     old_y = y;
                 }
-                else if(selection == 1){ global.grid = !global.grid; } //Grid 
+                else if(selection == 1) //Grid 
+                { 
+                    global.grid = !global.grid; 
+                    save_settings();
+                } 
                 else if(selection == 2) //Ghost
                 { 
                     global.ghost = !global.ghost;
+                    save_settings();
                 } 
                 else if(selection == 3) //Random
                 {
                     if(global.rand_method == "Full") { global.rand_method = "Bag"; }
                     else if(global.rand_method == "Bag") { global.rand_method = "Full"; }
+                    save_settings();
                 }
                 else if(selection == 4) //Controls
                 {
@@ -309,13 +315,6 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                     old_x = x;
                     old_y = y;
                 }
-                /*
-                else
-                {
-                    editmode = true;
-                    io_clear();
-                }
-                */
             }
         }
         else if(area == "gamecontrols")
@@ -390,11 +389,25 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                         {
                             index++;
                             if(index == array_length_1d(global.resolutions)) 
-                                { global.resolution = global.resolutions[0]; }
-                            else { global.resolution = global.resolutions[index]; }
-                            // = global.resolution;
+                            { 
+                                global.resolution = global.resolutions[0]; 
+                                index = -1;
+                                break;
+                            }
+                            else 
+                            { 
+                                global.resolution = global.resolutions[index]; 
+                                index = -1;
+                                break;
+                            }
                         }
                     }
+                    if(index == array_length_1d(global.resolutions)) //CUSTOM RESOLUTION
+                    {
+                        global.resolution = global.resolutions[0];
+                    }
+                    resolution_change(global.resolution, true);
+                    save_settings();
                 }
                 else if(selection == 2) //Refresh Rate
                 {
