@@ -2,10 +2,21 @@
 if( argument1 == in_modes.kb )
 {
     if( argument0 >= $41 and argument0 <= $5a ) { return string( chr(argument0) ); }
+    else if( argument0 >= 48 and argument0 <= 57 ) { return string( argument0 - 48 ); }
     else 
     { 
         switch(argument0)
         {
+            case 186: return ";";
+            case 187: return "=";
+            case 188: return ",";
+            case 189: return "-";
+            case 190: return ".";
+            case 191: return "/";
+            case 219: return "[";
+            case 220: return "\";
+            case 221: return "]";
+            case 222: return "'";
             case vk_left: return "L ARR";
             case vk_right: return "R ARR";
             case vk_up: return "U ARR";
@@ -63,7 +74,17 @@ if( argument1 == in_modes.kb )
         return string(argument0); 
     }
 }
-else if( argument1 = in_modes.gp )
+else if( argument1 == in_modes.mouse  )
+{
+    switch(argument0)
+    {
+        case mb_left: return "L MOUSE";
+        case mb_middle: return "M MOUSE";
+        case mb_right: return "R MOUSE";
+    }
+    
+}
+else if( floor(argument1) == in_modes.gp )
 {
     switch( argument0 )
     {
@@ -77,27 +98,35 @@ else if( argument1 = in_modes.gp )
         case gp_shoulderrb: return "RT";
         case gp_select: return "SELECT";
         case gp_start: return "START";
-        case gp_stickl: return "L_STK";
-        case gp_stickr: return "R_STK";
+        case gp_stickl: return "L_STK_P";
+        case gp_stickr: return "R_STK_P";
         case gp_padu: return "D_UP";
         case gp_padd: return "D_DOWN";
         case gp_padl: return "D_LEFT";
         case gp_padr: return "D_RIGHT";
-        case gp_axislh: return "L_STK_HOR";
-        case gp_axislv: return "L_STK_VER";
-        case gp_axisrh: return "R_STK_HOR";
-        case gp_axisrv: return "R_STK_VER";
     }
-}
-else if( argument1 == in_modes.mouse  )
-{
-    switch(argument0)
+    var slot = (argument1 - in_modes.gp)*100
+    var dir = (slot - floor(slot))*10;
+    if( argument0 == gp_axislh ) 
     {
-        case mb_left: return "L MOUSE";
-        case mb_middle: return "M MOUSE";
-        case mb_right: return "R MOUSE";
+        if(dir == 1) { return "-L_STK_HOR"; } 
+        if(dir == 3) { return "+L_STK_HOR"; } 
     }
-    
+    if( argument0 == gp_axislv ) 
+    {
+        if(dir == 1) { return "-L_STK_VER"; } 
+        if(dir == 3) { return "+L_STK_VER"; } 
+    }
+    if( argument0 == gp_axisrh ) 
+    {
+        if(dir == 1) { return "-R_STK_HOR"; } 
+        if(dir == 3) { return "+R_STK_HOR"; } 
+    }
+    if( argument0 == gp_axisrv ) 
+    {
+        if(dir == 1) { return "-R_STK_VER"; } 
+        if(dir == 3) { return "+R_STK_VER"; } 
+    }
 }
 
 

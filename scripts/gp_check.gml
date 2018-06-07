@@ -10,6 +10,7 @@ for(var i = 0; i < gp_count; i++)
     if(gamepad_is_connected(i))
     {
         ds_list_add(global.pads, i);
+        gamepad_set_axis_deadzone(i, 0.15);
         print("GAMEPAD " + string(ds_list_size(global.pads)) + " IN SLOT " + string(i));
     } 
 }

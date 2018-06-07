@@ -158,15 +158,40 @@ gp_check();
         global.in[? i] = keyboard_check(global.in_map[? i]); 
         global.in_p[? i] = keyboard_check_pressed(global.in_map[? i]);
     }
-    if(global.in_method[? i] == in_modes.gp) 
-    { 
-        
-    }
-    if(global.in_method[? i] == in_modes.mouse) 
+    else if(global.in_method[? i] == in_modes.mouse) 
     { 
         global.in[? i] = mouse_check_button(global.in_map[? i]); 
         global.in_p[? i] = mouse_check_button_pressed(global.in_map[? i]);
     }
+    else if(!is_undefined(global.in_method[? i]) and floor(global.in_method[? i]) == in_modes.gp)
+    {
+        var slot = (global.in_method[? i] - in_modes.gp)*100;
+        if( !is_undefined(ds_list_find_value(global.pads, slot)) )
+        {
+            if(slot == floor(slot)) //Not an axis
+            {
+                global.in[? i] = gamepad_button_check(slot, global.in_map[? i]); 
+                global.in_p[? i] = gamepad_button_check_pressed(slot, global.in_map[? i]);
+            }
+            else
+            {
+                var dir = (slot - floor(slot))*10;
+                var val = gamepad_axis_value(slot, global.in_map[? i]); 
+                if(dir == 3 and val &gt; 0 ) //+ axis
+                {
+                    global.in[? i] = true;
+                    global.in_p[? i] = true;
+                }
+                else if(dir == 1 and val &lt; 0) //- axis
+                {
+                    global.in[? i] = true;
+                    global.in_p[? i] = true;
+                }
+                
+            }
+        }
+    }
+    
 }
 </string>
           </argument>
