@@ -25,11 +25,7 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>global.in_map = ds_map_create();
-global.in_method = ds_map_create();
-global.in = ds_map_create();
-global.in_p = ds_map_create();
-enum gkeys 
+            <string>enum gkeys 
 {
     left,
     right,
@@ -59,73 +55,145 @@ enum in_modes
 };
 
 
-var default_map = ds_map_create();
-var default_method = ds_map_create();
-
-default_map[? gkeys.hold] = vk_shift;
-default_method[? gkeys.hold] = in_modes.kb;
-default_map[? gkeys.left] = vk_left;
-default_method[? gkeys.left] = in_modes.kb;
-default_map[? gkeys.right] = vk_right;
-default_method[? gkeys.right] = in_modes.kb;
-default_map[? gkeys.cw] = ord("S");
-default_method[? gkeys.cw] = in_modes.kb;
-default_map[? gkeys.ccw] = ord("A");
-default_method[? gkeys.ccw] = in_modes.kb;
-default_map[? gkeys.hd] = vk_space;
-default_method[? gkeys.hd] = in_modes.kb;
-default_map[? gkeys.sd] = vk_down;
-default_method[? gkeys.sd] = in_modes.kb;
-
-default_map[? mkeys.menu] = vk_escape;
-default_method[? mkeys.menu] = in_modes.kb;
-default_map[? mkeys.left] = vk_left;
-default_method[? mkeys.left] = in_modes.kb;
-default_map[? mkeys.right] = vk_right;
-default_method[? mkeys.right] = in_modes.kb;
-default_map[? mkeys.up] = vk_up;
-default_method[? mkeys.up] = in_modes.kb;
-default_map[? mkeys.down] = vk_down;
-default_method[? mkeys.down] = in_modes.kb;
-default_map[? mkeys.accept] = vk_space;
-default_method[? mkeys.accept] = in_modes.kb;
-default_map[? mkeys.back] = ord("A");
-default_method[? mkeys.back] = in_modes.kb;
-
 ini_open("settings.ini");
-global.in_map[? gkeys.hold] = ini_read_real("GAME_CONTROLS", "HOLD", default_map[? gkeys.hold]);
-global.in_method[? gkeys.hold] = ini_read_real("GAME_CONTROLS", "HOLD_METHOD", default_method[? gkeys.hold]);
-global.in_map[? gkeys.left] = ini_read_real("GAME_CONTROLS", "LEFT", default_map[? gkeys.left]);
-global.in_method[? gkeys.left] = ini_read_real("GAME_CONTROLS", "LEFT_METHOD", default_method[? gkeys.left]);
-global.in_map[? gkeys.right] = ini_read_real("GAME_CONTROLS", "RIGHT", default_map[? gkeys.right]);
-global.in_method[? gkeys.right] = ini_read_real("GAME_CONTROLS", "RIGHT_METHOD", default_method[? gkeys.right]);
-global.in_map[? gkeys.cw] = ini_read_real("GAME_CONTROLS", "CW", default_map[? gkeys.cw]);
-global.in_method[? gkeys.cw] = ini_read_real("GAME_CONTROLS", "CW_METHOD", default_method[? gkeys.cw]);
-global.in_map[? gkeys.ccw] = ini_read_real("GAME_CONTROLS", "CCW", default_map[? gkeys.ccw]);
-global.in_method[? gkeys.ccw] = ini_read_real("GAME_CONTROLS", "CCW_METHOD", default_method[? gkeys.ccw]);
-global.in_map[? gkeys.hd] = ini_read_real("GAME_CONTROLS", "HD", default_map[? gkeys.hd]);
-global.in_method[? gkeys.hd] = ini_read_real("GAME_CONTROLS", "HD_METHOD", default_method[? gkeys.hd]);
-global.in_map[? gkeys.sd] = ini_read_real("GAME_CONTROLS", "SD", default_map[? gkeys.sd]);
-global.in_method[? gkeys.sd] = ini_read_real("GAME_CONTROLS", "SD_METHOD", default_method[? gkeys.sd]);
+global.multi_input = ini_read_real("CONTROLS", "SIMULTANEOUS_MULTI_INPUT", false);
 
-global.in_map[? mkeys.menu] = ini_read_real("MENU_CONTROLS", "MENU", default_map[? mkeys.menu]);
-global.in_method[? mkeys.menu] = ini_read_real("MENU_CONTROLS", "MENU_METHOD", default_method[? mkeys.menu]);
-global.in_map[? mkeys.left] = ini_read_real("MENU_CONTROLS", "LEFT", default_map[? mkeys.left]);
-global.in_method[? mkeys.left] = ini_read_real("MENU_CONTROLS", "LEFT_METHOD", default_method[? mkeys.left]);
-global.in_map[? mkeys.right] = ini_read_real("MENU_CONTROLS", "RIGHT", default_map[? mkeys.right]);
-global.in_method[? mkeys.right] = ini_read_real("MENU_CONTROLS", "RIGHT_METHOD", default_method[? mkeys.right]);
-global.in_map[? mkeys.up] = ini_read_real("MENU_CONTROLS", "UP", default_map[? mkeys.up]);
-global.in_method[? mkeys.up] = ini_read_real("MENU_CONTROLS", "UP_METHOD", default_method[? mkeys.up]);
-global.in_map[? mkeys.down] = ini_read_real("MENU_CONTROLS", "DOWN", default_map[? mkeys.down]);
-global.in_method[? mkeys.down] = ini_read_real("MENU_CONTROLS", "DOWN_METHOD", default_method[? mkeys.down]);
-global.in_map[? mkeys.accept] = ini_read_real("MENU_CONTROLS", "ACCEPT", default_map[? mkeys.accept]);
-global.in_method[? mkeys.accept] = ini_read_real("MENU_CONTROLS", "ACCEPT_METHOD", default_method[? mkeys.accept]);
-global.in_map[? mkeys.back] = ini_read_real("MENU_CONTROLS", "BACK", default_map[? mkeys.back]);
-global.in_method[? mkeys.back] = ini_read_real("MENU_CONTROLS", "BACK_METHOD", default_method[? mkeys.back]);
+if(global.multi_input) { global.in_method = ds_map_create(); }
+else { global.in_method = in_modes.kb; }
+global.in_map = ds_map_create();
+global.in = ds_map_create();
+global.in_p = ds_map_create();
+
+default_method_map = ds_map_create();
+default_method_map[? gkeys.hold] = in_modes.kb;
+default_method_map[? gkeys.left] = in_modes.kb;
+default_method_map[? gkeys.right] = in_modes.kb;
+default_method_map[? gkeys.cw] = in_modes.kb;
+default_method_map[? gkeys.ccw] = in_modes.kb;
+default_method_map[? gkeys.hd] = in_modes.kb;
+default_method_map[? gkeys.sd] = in_modes.kb;
+
+default_method_map[? mkeys.menu] = in_modes.kb;
+default_method_map[? mkeys.left] = in_modes.kb;
+default_method_map[? mkeys.right] = in_modes.kb;
+default_method_map[? mkeys.up] = in_modes.kb;
+default_method_map[? mkeys.down] = in_modes.kb;
+default_method_map[? mkeys.accept] = in_modes.kb;
+default_method_map[? mkeys.back] = in_modes.kb;
+
+
+kb_default_map = ds_map_create();
+kb_default_map[? gkeys.hold] = vk_shift;
+kb_default_map[? gkeys.left] = vk_left;
+kb_default_map[? gkeys.right] = vk_right;
+kb_default_map[? gkeys.cw] = ord("S");
+kb_default_map[? gkeys.ccw] = ord("A");
+kb_default_map[? gkeys.hd] = vk_space;
+kb_default_map[? gkeys.sd] = vk_down;
+
+kb_default_map[? mkeys.menu] = vk_escape;
+kb_default_map[? mkeys.left] = vk_left;
+kb_default_map[? mkeys.right] = vk_right;
+kb_default_map[? mkeys.up] = vk_up;
+kb_default_map[? mkeys.down] = vk_down;
+kb_default_map[? mkeys.accept] = vk_space;
+kb_default_map[? mkeys.back] = ord("A");
+
+gp_default_map = ds_map_create();
+gp_default_map[? gkeys.hold] = gp_shoulderl;
+gp_default_map[? gkeys.left] = gp_padl;
+gp_default_map[? gkeys.right] = gp_padr;
+gp_default_map[? gkeys.cw] = gp_face2;
+gp_default_map[? gkeys.ccw] = gp_face1;
+gp_default_map[? gkeys.hd] = gp_padu;
+gp_default_map[? gkeys.sd] = gp_padd;
+
+gp_default_map[? mkeys.menu] = gp_start;
+gp_default_map[? mkeys.left] = gp_padl;
+gp_default_map[? mkeys.right] = gp_padr;
+gp_default_map[? mkeys.up] = gp_padu;
+gp_default_map[? mkeys.down] = gp_padd;
+gp_default_map[? mkeys.accept] = gp_face1;
+gp_default_map[? mkeys.back] = gp_face2;
+
+if(global.multi_input)
+{
+    
+    global.in_method[? gkeys.hold] = ini_read_real("GAME_CONTROLS", "HOLD_METHOD", default_method_map[? gkeys.hold]);
+    global.in_method[? gkeys.left] = ini_read_real("GAME_CONTROLS", "LEFT_METHOD", default_method_map[? gkeys.left]);
+    global.in_method[? gkeys.right] = ini_read_real("GAME_CONTROLS", "RIGHT_METHOD", default_method_map[? gkeys.right]);
+    global.in_method[? gkeys.cw] = ini_read_real("GAME_CONTROLS", "CW_METHOD", default_method_map[? gkeys.cw]);
+    global.in_method[? gkeys.ccw] = ini_read_real("GAME_CONTROLS", "CCW_METHOD", default_method_map[? gkeys.ccw]);
+    global.in_method[? gkeys.hd] = ini_read_real("GAME_CONTROLS", "HD_METHOD", default_method_map[? gkeys.hd]);
+    global.in_method[? gkeys.sd] = ini_read_real("GAME_CONTROLS", "SD_METHOD", default_method_map[? gkeys.sd]);
+    
+    global.in_method[? mkeys.menu] = ini_read_real("MENU_CONTROLS", "MENU_METHOD", default_method_map[? mkeys.menu]);
+    global.in_method[? mkeys.left] = ini_read_real("MENU_CONTROLS", "LEFT_METHOD", default_method_map[? mkeys.left]);
+    global.in_method[? mkeys.right] = ini_read_real("MENU_CONTROLS", "RIGHT_METHOD", default_method_map[? mkeys.right]);
+    global.in_method[? mkeys.up] = ini_read_real("MENU_CONTROLS", "UP_METHOD", default_method_map[? mkeys.up]);
+    global.in_method[? mkeys.down] = ini_read_real("MENU_CONTROLS", "DOWN_METHOD", default_method_map[? mkeys.down]);
+    global.in_method[? mkeys.accept] = ini_read_real("MENU_CONTROLS", "ACCEPT_METHOD", default_method_map[? mkeys.accept]);
+    global.in_method[? mkeys.back] = ini_read_real("MENU_CONTROLS", "BACK_METHOD", default_method_map[? mkeys.back]);
+
+
+    global.in_map[? gkeys.hold] = ini_read_real("GAME_CONTROLS", "HOLD", kb_default_map[? gkeys.hold]);
+    global.in_map[? gkeys.left] = ini_read_real("GAME_CONTROLS", "LEFT", kb_default_map[? gkeys.left]);
+    global.in_map[? gkeys.right] = ini_read_real("GAME_CONTROLS", "RIGHT", kb_default_map[? gkeys.right]);
+    global.in_map[? gkeys.cw] = ini_read_real("GAME_CONTROLS", "CW", kb_default_map[? gkeys.cw]);
+    global.in_map[? gkeys.ccw] = ini_read_real("GAME_CONTROLS", "CCW", kb_default_map[? gkeys.ccw]);
+    global.in_map[? gkeys.hd] = ini_read_real("GAME_CONTROLS", "HD", kb_default_map[? gkeys.hd]);
+    global.in_map[? gkeys.sd] = ini_read_real("GAME_CONTROLS", "SD", kb_default_map[? gkeys.sd]);
+    
+    global.in_map[? mkeys.menu] = ini_read_real("MENU_CONTROLS", "MENU", kb_default_map[? mkeys.menu]);
+    global.in_map[? mkeys.left] = ini_read_real("MENU_CONTROLS", "LEFT", kb_default_map[? mkeys.left]);
+    global.in_map[? mkeys.right] = ini_read_real("MENU_CONTROLS", "RIGHT", kb_default_map[? mkeys.right]);
+    global.in_map[? mkeys.up] = ini_read_real("MENU_CONTROLS", "UP", kb_default_map[? mkeys.up]);
+    global.in_map[? mkeys.down] = ini_read_real("MENU_CONTROLS", "DOWN", kb_default_map[? mkeys.down]);
+    global.in_map[? mkeys.accept] = ini_read_real("MENU_CONTROLS", "ACCEPT", kb_default_map[? mkeys.accept]);
+    global.in_map[? mkeys.back] = ini_read_real("MENU_CONTROLS", "BACK", kb_default_map[? mkeys.back]);
+}
+else
+{
+    if(global.in_method == in_modes.kb)
+    {
+        global.in_map[? gkeys.hold] = ini_read_real("GAME_CONTROLS", "HOLD", kb_default_map[? gkeys.hold]);
+        global.in_map[? gkeys.left] = ini_read_real("GAME_CONTROLS", "LEFT", kb_default_map[? gkeys.left]);
+        global.in_map[? gkeys.right] = ini_read_real("GAME_CONTROLS", "RIGHT", kb_default_map[? gkeys.right]);
+        global.in_map[? gkeys.cw] = ini_read_real("GAME_CONTROLS", "CW", kb_default_map[? gkeys.cw]);
+        global.in_map[? gkeys.ccw] = ini_read_real("GAME_CONTROLS", "CCW", kb_default_map[? gkeys.ccw]);
+        global.in_map[? gkeys.hd] = ini_read_real("GAME_CONTROLS", "HD", kb_default_map[? gkeys.hd]);
+        global.in_map[? gkeys.sd] = ini_read_real("GAME_CONTROLS", "SD", kb_default_map[? gkeys.sd]);
+        
+        global.in_map[? mkeys.menu] = ini_read_real("MENU_CONTROLS", "MENU", kb_default_map[? mkeys.menu]);
+        global.in_map[? mkeys.left] = ini_read_real("MENU_CONTROLS", "LEFT", kb_default_map[? mkeys.left]);
+        global.in_map[? mkeys.right] = ini_read_real("MENU_CONTROLS", "RIGHT", kb_default_map[? mkeys.right]);
+        global.in_map[? mkeys.up] = ini_read_real("MENU_CONTROLS", "UP", kb_default_map[? mkeys.up]);
+        global.in_map[? mkeys.down] = ini_read_real("MENU_CONTROLS", "DOWN", kb_default_map[? mkeys.down]);
+        global.in_map[? mkeys.accept] = ini_read_real("MENU_CONTROLS", "ACCEPT", kb_default_map[? mkeys.accept]);
+        global.in_map[? mkeys.back] = ini_read_real("MENU_CONTROLS", "BACK", kb_default_map[? mkeys.back]);
+    }
+    else if(global.in_method == in_modes.gp)
+    {
+        global.in_map[? gkeys.hold] = ini_read_real("GAME_CONTROLS", "HOLD", gp_default_map[? gkeys.hold]);
+        global.in_map[? gkeys.left] = ini_read_real("GAME_CONTROLS", "LEFT", gp_default_map[? gkeys.left]);
+        global.in_map[? gkeys.right] = ini_read_real("GAME_CONTROLS", "RIGHT", gp_default_map[? gkeys.right]);
+        global.in_map[? gkeys.cw] = ini_read_real("GAME_CONTROLS", "CW", gp_default_map[? gkeys.cw]);
+        global.in_map[? gkeys.ccw] = ini_read_real("GAME_CONTROLS", "CCW", gp_default_map[? gkeys.ccw]);
+        global.in_map[? gkeys.hd] = ini_read_real("GAME_CONTROLS", "HD", gp_default_map[? gkeys.hd]);
+        global.in_map[? gkeys.sd] = ini_read_real("GAME_CONTROLS", "SD", gp_default_map[? gkeys.sd]);
+        
+        global.in_map[? mkeys.menu] = ini_read_real("MENU_CONTROLS", "MENU", gp_default_map[? mkeys.menu]);
+        global.in_map[? mkeys.left] = ini_read_real("MENU_CONTROLS", "LEFT", gp_default_map[? mkeys.left]);
+        global.in_map[? mkeys.right] = ini_read_real("MENU_CONTROLS", "RIGHT", gp_default_map[? mkeys.right]);
+        global.in_map[? mkeys.up] = ini_read_real("MENU_CONTROLS", "UP", gp_default_map[? mkeys.up]);
+        global.in_map[? mkeys.down] = ini_read_real("MENU_CONTROLS", "DOWN", gp_default_map[? mkeys.down]);
+        global.in_map[? mkeys.accept] = ini_read_real("MENU_CONTROLS", "ACCEPT", gp_default_map[? mkeys.accept]);
+        global.in_map[? mkeys.back] = ini_read_real("MENU_CONTROLS", "BACK", gp_default_map[? mkeys.back]);
+    }
+}
+
+
 ini_close();
-
-ds_map_destroy(default_map);
-ds_map_destroy(default_method);
 
 global.pads = noone;
 gp_check();
@@ -151,47 +219,185 @@ gp_check();
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>for (var i = 0; i &lt; mkeys.length; i++)
+            <string>if(!global.multi_input)
 {
-    if(global.in_method[? i] == in_modes.kb) 
-    { 
-        global.in[? i] = keyboard_check(global.in_map[? i]); 
-        global.in_p[? i] = keyboard_check_pressed(global.in_map[? i]);
-    }
-    else if(global.in_method[? i] == in_modes.mouse) 
-    { 
-        global.in[? i] = mouse_check_button(global.in_map[? i]); 
-        global.in_p[? i] = mouse_check_button_pressed(global.in_map[? i]);
-    }
-    else if(!is_undefined(global.in_method[? i]) and floor(global.in_method[? i]) == in_modes.gp)
+    var dev = global.in_method;
+    if(dev == in_modes.kb) 
     {
-        var slot = (global.in_method[? i] - in_modes.gp)*100;
+        for (var i = 0; i &lt; mkeys.length; i++)
+        {
+            if(i == gkeys.length) { i++; }
+            
+            global.in[? i] = keyboard_check(global.in_map[? i]); 
+            global.in_p[? i] = keyboard_check_pressed(global.in_map[? i]);
+        }
+    }
+    else if(dev == in_modes.mouse) 
+    {
+        for (var i = 0; i &lt; mkeys.length; i++)
+        {
+            if(i == gkeys.length) { i++; }
+            
+            global.in[? i] = mouse_check_button(global.in_map[? i]); 
+            global.in_p[? i] = mouse_check_button_pressed(global.in_map[? i]);
+        }
+    }
+    else if(floor(dev) == in_modes.gp) 
+    {
+        var slot = (dev - in_modes.gp)*100;
         if( !is_undefined(ds_list_find_value(global.pads, slot)) )
         {
-            if(slot == floor(slot)) //Not an axis
+            for (var i = 0; i &lt; mkeys.length; i++)
             {
-                global.in[? i] = gamepad_button_check(slot, global.in_map[? i]); 
-                global.in_p[? i] = gamepad_button_check_pressed(slot, global.in_map[? i]);
-            }
-            else
-            {
-                var dir = (slot - floor(slot))*10;
-                var val = gamepad_axis_value(slot, global.in_map[? i]); 
-                if(dir == 3 and val &gt; 0 ) //+ axis
+                if(i == gkeys.length) { i++; }
+            
+                if(slot == floor(slot)) //Not an axis
                 {
-                    global.in[? i] = true;
-                    global.in_p[? i] = true;
+                    global.in[? i] = gamepad_button_check(slot, global.in_map[? i]); 
+                    global.in_p[? i] = gamepad_button_check_pressed(slot, global.in_map[? i]);
                 }
-                else if(dir == 1 and val &lt; 0) //- axis
+                else
                 {
-                    global.in[? i] = true;
-                    global.in_p[? i] = true;
+                    var dir = (slot - floor(slot))*10;
+                    var val = gamepad_axis_value(slot, global.in_map[? i]); 
+                    if(dir == 3 and val &gt; 0 ) //+ axis
+                    {
+                        global.in[? i] = true;
+                        global.in_p[? i] = true;
+                    }
+                    else if(dir == 1 and val &lt; 0) //- axis
+                    {
+                        global.in[? i] = true;
+                        global.in_p[? i] = true;
+                    }
                 }
-                
             }
         }
     }
+}
+else
+{
+    for (var i = 0; i &lt; mkeys.length; i++)
+    {
+        if(global.in_method[? i] == in_modes.kb) 
+        { 
+            global.in[? i] = keyboard_check(global.in_map[? i]); 
+            global.in_p[? i] = keyboard_check_pressed(global.in_map[? i]);
+        }
+        else if(global.in_method[? i] == in_modes.mouse) 
+        { 
+            global.in[? i] = mouse_check_button(global.in_map[? i]); 
+            global.in_p[? i] = mouse_check_button_pressed(global.in_map[? i]);
+        }
+        else if(!is_undefined(global.in_method[? i]) and floor(global.in_method[? i]) == in_modes.gp)
+        {
+            var slot = (global.in_method[? i] - in_modes.gp)*100;
+            if( !is_undefined(ds_list_find_value(global.pads, slot)) )
+            {
+                if(slot == floor(slot)) //Not an axis
+                {
+                    global.in[? i] = gamepad_button_check(slot, global.in_map[? i]); 
+                    global.in_p[? i] = gamepad_button_check_pressed(slot, global.in_map[? i]);
+                }
+                else
+                {
+                    var dir = (slot - floor(slot))*10;
+                    var val = gamepad_axis_value(slot, global.in_map[? i]); 
+                    if(dir == 3 and val &gt; 0 ) //+ axis
+                    {
+                        global.in[? i] = true;
+                        global.in_p[? i] = true;
+                    }
+                    else if(dir == 1 and val &lt; 0) //- axis
+                    {
+                        global.in[? i] = true;
+                        global.in_p[? i] = true;
+                    }
+                }
+            }
+        }
+    }
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="7" enumb="10">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Reset to default
+if(global.multi_input)
+{
+    global.in_method[? gkeys.hold] = default_method_map[? gkeys.hold];
+    global.in_method[? gkeys.left] = default_method_map[? gkeys.left];
+    global.in_method[? gkeys.right] = default_method_map[? gkeys.right];
+    global.in_method[? gkeys.cw] = default_method_map[? gkeys.cw];
+    global.in_method[? gkeys.ccw] = default_method_map[? gkeys.ccw];
+    global.in_method[? gkeys.hd] = default_method_map[? gkeys.hd];
+    global.in_method[? gkeys.sd] = default_method_map[? gkeys.sd];
     
+    global.in_method[? mkeys.menu] = default_method_map[? mkeys.menu];
+    global.in_method[? mkeys.left] = default_method_map[? mkeys.left];
+    global.in_method[? mkeys.right] = default_method_map[? mkeys.right];
+    global.in_method[? mkeys.up] = default_method_map[? mkeys.up];
+    global.in_method[? mkeys.down] = default_method_map[? mkeys.down];
+    global.in_method[? mkeys.accept] = default_method_map[? mkeys.accept];
+    global.in_method[? mkeys.back] = default_method_map[? mkeys.back];
+    
+    
+    global.in_map[? gkeys.hold] = kb_default_map[? gkeys.hold];
+    global.in_map[? gkeys.left] = kb_default_map[? gkeys.left];
+    global.in_map[? gkeys.right] = kb_default_map[? gkeys.right];
+    global.in_map[? gkeys.cw] = kb_default_map[? gkeys.cw];
+    global.in_map[? gkeys.ccw] = kb_default_map[? gkeys.ccw];
+    global.in_map[? gkeys.hd] = kb_default_map[? gkeys.hd];
+    global.in_map[? gkeys.sd] = kb_default_map[? gkeys.sd];
+    
+    global.in_map[? mkeys.menu] = kb_default_map[? mkeys.menu];
+    global.in_map[? mkeys.left] = kb_default_map[? mkeys.left];
+    global.in_map[? mkeys.right] = kb_default_map[? mkeys.right];
+    global.in_map[? mkeys.up] = kb_default_map[? mkeys.up];
+    global.in_map[? mkeys.down] = kb_default_map[? mkeys.down];
+    global.in_map[? mkeys.accept] = kb_default_map[? mkeys.accept];
+    global.in_map[? mkeys.back] = kb_default_map[? mkeys.back];
+}
+else 
+{ 
+    global.in_method = in_modes.kb; 
+
+    if(global.in_method == in_modes.kb)
+    {  
+        global.in_map[? gkeys.hold] = kb_default_map[? gkeys.hold];
+        global.in_map[? gkeys.left] = kb_default_map[? gkeys.left];
+        global.in_map[? gkeys.right] = kb_default_map[? gkeys.right];
+        global.in_map[? gkeys.cw] = kb_default_map[? gkeys.cw];
+        global.in_map[? gkeys.ccw] = kb_default_map[? gkeys.ccw];
+        global.in_map[? gkeys.hd] = kb_default_map[? gkeys.hd];
+        global.in_map[? gkeys.sd] = kb_default_map[? gkeys.sd];
+        
+        global.in_map[? mkeys.menu] = kb_default_map[? mkeys.menu];
+        global.in_map[? mkeys.left] = kb_default_map[? mkeys.left];
+        global.in_map[? mkeys.right] = kb_default_map[? mkeys.right];
+        global.in_map[? mkeys.up] = kb_default_map[? mkeys.up];
+        global.in_map[? mkeys.down] = kb_default_map[? mkeys.down];
+        global.in_map[? mkeys.accept] = kb_default_map[? mkeys.accept];
+        global.in_map[? mkeys.back] = kb_default_map[? mkeys.back];
+    }
 }
 </string>
           </argument>

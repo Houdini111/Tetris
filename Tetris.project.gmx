@@ -130,6 +130,7 @@
     <script>scripts\generate_controls_surface.gml</script>
     <script>scripts\draw_text_color_outline.gml</script>
     <script>scripts\moveLinesDown.gml</script>
+    <script>scripts\gp_check.gml</script>
     <scripts name="TweenGMS">
       <scripts name="Tweening">
         <scripts name="Tween Fire">
@@ -365,7 +366,7 @@
       <script>scripts\print.gml</script>
       <script>scripts\print_map.gml</script>
     </scripts>
-    <script>scripts\gp_check.gml</script>
+    <script>scripts\ini_check_and_delete.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\my_font</font>

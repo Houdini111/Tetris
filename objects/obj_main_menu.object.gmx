@@ -73,6 +73,8 @@ sections[? "options"] = options;
 controls = ds_list_create();
 ds_list_add(controls, my_large_font);
 ds_list_add(controls, "&lt;");
+ds_list_add(controls, "Simul Multi-dev In");
+ds_list_add(controls, "In Method");
 ds_list_add(controls, "Game Controls");
 ds_list_add(controls, "Menu Controls");
 sections[? "controls"] = controls;
@@ -295,7 +297,48 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                     old_x = x;
                     old_y = y;
                 }
-                else if(selection == 1) //Gamecontrols
+                else if(selection == 1) //Multidevice input
+                {
+                    if(global.multi_input and ds_exists(global.in_method, ds_type_map)) { ds_map_destroy(global.in_method); }
+                    else if (!global.multi_input) { global.in_method = ds_map_create(); }    
+                
+                    global.multi_input = !global.multi_input;
+                    
+                    with(global.input_handler) { event_user(0); }
+                    
+                    save_settings();
+                }
+                else if(selection == 2) //Input method
+                {
+                    if(!global.multi_input)
+                    {
+                        var in = global.in_method;
+                        
+                        if(floor(in) == in_modes.gp) 
+                        {
+                            var slot = floor(in*100 - floor(in*100));
+                            var p = ds_list_find_value(global.pads, slot);
+                            if( !is_undefined(p) )
+                            {
+                                if(p == ds_list_size(global.pads)) { in = 0; }
+                                else { in = in_modes.gp + (global.pads[| p+1] / 100); }
+                            }
+                            else { in = 0; }
+                        }
+                        else if(in == in_modes.kb or in == in_modes.mouse) { in = in_modes.gp + global.pads[| 0]/100; }
+                        else { in++; }
+                        
+                        for(var i = 0; i &lt; mkeys.length; i++)
+                        {
+                            if(i == gkeys.length) { i++; }
+                            
+                            //CHANGE INPUTS TO DEFAULT
+                        }
+                        
+                        save_settings();
+                    }
+                }
+                else if(selection == 3) //Gamecontrols
                 {
                     selection = 0; 
                     area = last_area;
@@ -305,7 +348,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                     old_x = x;
                     old_y = y;
                 }
-                else if(selection == 2) //Menucontrols
+                else if(selection == 4) //Menucontrols
                 {
                     selection = 0; 
                     area = last_area;
@@ -474,18 +517,15 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
             
             if((area == "gamecontrols" or area == "menucontrols") and selection != 0)
             {
-                if(keyboard_key != 0)
+                if(keyboard_key != 0 and (global.multi_input or (!global.multi_input and global.in_method == in_modes.kb)))
                 {
-                    //print("DEVICE: KB | KEY: " + string(keyboard_key));
-                    //print(string(selection - 1) + " SET TO " + input_to_string(keyboard_key, in_modes.kb));
                     global.in_map[? to_set] = keyboard_key;
                     global.in_method[? to_set] = in_modes.kb;
                     editmode = false;
                     save_settings();
                 }
-                else if(mouse_button != 0)
+                else if(mouse_button != 0 and (global.multi_input or (!global.multi_input and global.in_method == in_modes.mouse)))
                 {
-                    //print("DEVICE: MS | KEY: " + string(mouse_button));
                     global.in_map[? to_set] = mouse_button;
                     global.in_method[? to_set] = in_modes.mouse;
                     editmode = false;
@@ -495,112 +535,112 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                 {
                     for(var i = 0; i &lt; ds_list_size(global.pads); i++)
                     {
-                        if(gamepad_button_check_pressed(global.pads[| i], gp_face1)) 
+                        if(gamepad_button_check_pressed(global.pads[| i], gp_face1) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_face1;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_face2)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_face2) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_face2;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_face3)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_face3) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_face3;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_face4)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_face4) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_face4;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderl)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderl) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_shoulderl;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderr)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderr) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_shoulderr;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderlb)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderlb) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_shoulderlb;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderrb)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderrb) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_shoulderrb;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_select)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_select) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_select;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_start)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_start) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_start;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_stickl)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_stickl) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_stickl;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_stickr)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_stickr) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_stickr;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padu)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padu) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_padu;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padd)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padd) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_padd;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padl)) 
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padl) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
                         {
                             global.in_map[? to_set] = gp_padl;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
                             editmode = false;
                             save_settings();
                         }
-                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padr))
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padr) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp)))
                         {
                             global.in_map[? to_set] = gp_padr;
                             global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
@@ -609,28 +649,28 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                         }
                         else
                         {
-                            if(abs(gamepad_axis_value(global.pads[| i], gp_axislh)) &gt; abs(gamepad_axis_value(global.pads[| i], gp_axislv)))
+                            if(abs(gamepad_axis_value(global.pads[| i], gp_axislh)) &gt; abs(gamepad_axis_value(global.pads[| i], gp_axislv)) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp)))
                             {
                                 global.in_map[? to_set] = gp_axislh;
                                 global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100) + (2 + sign(gamepad_axis_value(global.pads[| i], gp_axislh)))/1000;
                                 editmode = false;
                                 save_settings();
                             }
-                            else if(abs(gamepad_axis_value(global.pads[| i], gp_axislh)) &lt; abs(gamepad_axis_value(global.pads[| i], gp_axislv)))
+                            else if(abs(gamepad_axis_value(global.pads[| i], gp_axislh)) &lt; abs(gamepad_axis_value(global.pads[| i], gp_axislv)) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp)))
                             {
                                 global.in_map[? to_set] = gp_axislv;
                                 global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100) + (2 + sign(gamepad_axis_value(global.pads[| i], gp_axislv)))/1000;
                                 editmode = false;
                                 save_settings();
                             }
-                            else if(abs(gamepad_axis_value(global.pads[| i], gp_axisrh)) &gt; abs(gamepad_axis_value(global.pads[| i], gp_axisrv)))
+                            else if(abs(gamepad_axis_value(global.pads[| i], gp_axisrh)) &gt; abs(gamepad_axis_value(global.pads[| i], gp_axisrv)) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp)))
                             {
                                 global.in_map[? to_set] = gp_axisrh;
                                 global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100) + (2 + sign(gamepad_axis_value(global.pads[| i], gp_axisrh)))/1000;
                                 editmode = false;
                                 save_settings();
                             }
-                            else if(abs(gamepad_axis_value(global.pads[| i], gp_axisrh)) &lt; abs(gamepad_axis_value(global.pads[| i], gp_axisrv)))
+                            else if(abs(gamepad_axis_value(global.pads[| i], gp_axisrh)) &lt; abs(gamepad_axis_value(global.pads[| i], gp_axisrv)) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp)))
                             {
                                 global.in_map[? to_set] = gp_axisrv;
                                 global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100) + (2 + sign(gamepad_axis_value(global.pads[| i], gp_axisrv)))/1000;
@@ -759,8 +799,21 @@ if(area == "controls" or (last_area == "controls" and ( abs(x - goal_x) &gt; tol
         draw_text(w*PADDING/2+w*2-x, h/3+large_height*i-y, controls[|i+1]);
         draw_set_halign(fa_right);
         if(i == 0) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "Go Back"); }
-        else if(i == 1) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
-        else if(i == 2) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
+        else if(i == 1) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.multi_input, "oo")); }
+        else if(i == 2) 
+        { 
+            var text = "N/A";
+            if(!global.multi_input) 
+            { 
+                var m = global.in_method;
+                if(m == in_modes.kb) { text = "Keyboard"; }
+                if(m == in_modes.mouse) { text = "Mouse"; }
+                if(!is_undefined(m) and floor(m) == in_modes.gp)  { text = "Gamepad " + string(floor(m*100 - floor(m*100))); }
+            }
+            draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, text); 
+        }
+        else if(i == 3) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
+        else if(i == 4) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
         draw_set_halign(fa_left);
     }
     /*
@@ -807,14 +860,28 @@ if(area == "gamecontrols" or (last_area == "gamecontrols" and ( abs(x - goal_x) 
     {
         draw_text(w*PADDING/2+w*2-x, -h+h/3+large_height*i-y, gamecontrols[|i+1]);
         draw_set_halign(fa_right);
-        if(i == 0) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, "Go Back"); }
-        else if(i == 1) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.left], global.in_method[? gkeys.left]) + " | " + string(device_to_string(global.in_method[? gkeys.left]))); }
-        else if(i == 2) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.right], global.in_method[? gkeys.right]) + " | " + string(device_to_string(global.in_method[? gkeys.right]))); }
-        else if(i == 3) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.cw], global.in_method[? gkeys.cw]) + " | " + string(device_to_string(global.in_method[? gkeys.cw]))); }
-        else if(i == 4) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.ccw], global.in_method[? gkeys.ccw]) + " | " + string(device_to_string(global.in_method[? gkeys.ccw]))); }
-        else if(i == 5) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hd], global.in_method[? gkeys.hd]) + " | " + string(device_to_string(global.in_method[? gkeys.hd]))); }
-        else if(i == 6) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.sd], global.in_method[? gkeys.sd]) + " | " + string(device_to_string(global.in_method[? gkeys.sd]))); }
-        else if(i == 7) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hold], global.in_method[? gkeys.hold]) + " | " + string(device_to_string(global.in_method[? gkeys.hold]))); }
+        if(global.multi_input)
+        {
+            if(i == 0) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, "Go Back"); }
+            else if(i == 1) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.left], global.in_method[? gkeys.left]) + " | " + string(device_to_string(global.in_method[? gkeys.left]))); }
+            else if(i == 2) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.right], global.in_method[? gkeys.right]) + " | " + string(device_to_string(global.in_method[? gkeys.right]))); }
+            else if(i == 3) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.cw], global.in_method[? gkeys.cw]) + " | " + string(device_to_string(global.in_method[? gkeys.cw]))); }
+            else if(i == 4) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.ccw], global.in_method[? gkeys.ccw]) + " | " + string(device_to_string(global.in_method[? gkeys.ccw]))); }
+            else if(i == 5) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hd], global.in_method[? gkeys.hd]) + " | " + string(device_to_string(global.in_method[? gkeys.hd]))); }
+            else if(i == 6) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.sd], global.in_method[? gkeys.sd]) + " | " + string(device_to_string(global.in_method[? gkeys.sd]))); }
+            else if(i == 7) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hold], global.in_method[? gkeys.hold]) + " | " + string(device_to_string(global.in_method[? gkeys.hold]))); }
+        }
+        else 
+        {
+            if(i == 0) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, "Go Back"); }
+            else if(i == 1) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.left], global.in_method)); }
+            else if(i == 2) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.right], global.in_method)); }
+            else if(i == 3) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.cw], global.in_method)); }
+            else if(i == 4) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.ccw], global.in_method)); }
+            else if(i == 5) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hd], global.in_method)); }
+            else if(i == 6) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.sd], global.in_method)); }
+            else if(i == 7) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hold], global.in_method)); }
+        }
         draw_set_halign(fa_left);
     }
 }

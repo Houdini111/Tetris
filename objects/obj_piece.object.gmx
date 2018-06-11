@@ -85,17 +85,17 @@ else if(global.rand_method == "Bag")
 
 if(type == "long")
 {
-    x = 6;
+    x = 3;
     y = 4;
 
     c = global.lBlue; //Color
     m_c = merge_color(c, c_white, m_b_a); //Moving color
     g_c = merge_color(c, c_white, g_b_a); //Ghost color
 
-    segments[0] = instance_create(x-0, y, obj_segment);
-    segments[1] = instance_create(x-1, y, obj_segment);
-    segments[2] = instance_create(x-2, y, obj_segment);    
-    segments[3] = instance_create(x-3, y, obj_segment);
+    segments[0] = instance_create(x+0, y, obj_segment);
+    segments[1] = instance_create(x+1, y, obj_segment);
+    segments[2] = instance_create(x+2, y, obj_segment);    
+    segments[3] = instance_create(x+3, y, obj_segment);
 
     rot = 90;
 }
@@ -806,6 +806,7 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                         
                         if(safe)
                         {
+                            print("SAFE BUMP UP TWO");
                             failed = false; 
                             
                             segments[0].y -= 2;

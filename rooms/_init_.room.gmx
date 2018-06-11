@@ -51,7 +51,7 @@ global.clear_speed = ini_read_real("GAMEPLAY", "CLEAR_SPEED", defaults[? "CLEAR_
 ini_close();
 
 
-instance_create(0, 0, obj_input_handler);
+global.input_handler = instance_create(0, 0, obj_input_handler);
 save_settings(true, true);
 
 ds_map_destroy(defaults);
@@ -69,7 +69,7 @@ room_goto(rm_main_menu);</code>
   <clearDisplayBuffer>-1</clearDisplayBuffer>
   <makerSettings>
     <isSet>-1</isSet>
-    <w>992</w>
+    <w>1016</w>
     <h>600</h>
     <showGrid>-1</showGrid>
     <showObjects>-1</showObjects>
