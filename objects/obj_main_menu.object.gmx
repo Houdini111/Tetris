@@ -75,6 +75,7 @@ ds_list_add(controls, my_large_font);
 ds_list_add(controls, "&lt;");
 ds_list_add(controls, "Simul Multi-dev In");
 ds_list_add(controls, "In Method");
+ds_list_add(controls, "Reset to Default");
 ds_list_add(controls, "Game Controls");
 ds_list_add(controls, "Menu Controls");
 sections[? "controls"] = controls;
@@ -164,7 +165,10 @@ sections[? "sound"] = sound;
 ds_list_destroy(main);
 ds_list_destroy(options);
 ds_list_destroy(controls);
+ds_list_destroy(gamecontrols);
+ds_list_destroy(menucontrols);
 ds_list_destroy(display);
+ds_list_destroy(sound);
 </string>
           </argument>
         </arguments>
@@ -338,7 +342,13 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                         save_settings();
                     }
                 }
-                else if(selection == 3) //Gamecontrols
+                else if(selection == 3) //Reset to Default
+                {
+                    with(global.input_handler) { event_user(0); }
+                    
+                    save_settings();
+                }
+                else if(selection == 4) //Gamecontrols
                 {
                     selection = 0; 
                     area = last_area;
@@ -348,7 +358,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                     old_x = x;
                     old_y = y;
                 }
-                else if(selection == 4) //Menucontrols
+                else if(selection == 5) //Menucontrols
                 {
                     selection = 0; 
                     area = last_area;

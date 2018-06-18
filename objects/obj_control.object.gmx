@@ -666,6 +666,8 @@ if(global.debug_overlay)
     draw_text_color_outline(10, 50 + string_height("FPS")*2, "DISPLAY_FPS: " + string(1000000/delta_time), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
     draw_text_color_outline(10, 50 + string_height("FPS")*3, "FRAME_TIME (ms): " + string_format(delta_time/1000, 5, 3), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
     
+    draw_text_color_outline(10, 50 + string_height("FPS")*5, "PAUSED: " + string(global.paused), c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
+    
     if(global.active != noone)
     {
         draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*11, "slideDir: " + global.active.slideDir, c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);

@@ -34,38 +34,55 @@ views[? "options_x"] = w;
 views[? "options_y"] = 0;
 views[? "controls_x"] = w*2;
 views[? "controls_y"] = 0;
+views[? "gamecontrols_x"] = w*2;
+views[? "gamecontrols_y"] = -h;
+views[? "menucontrols_x"] = w*2;
+views[? "menucontrols_y"] = h;
 views[? "display_x"] = w;
 views[? "display_y"] = -h;
+views[? "sound_x"] = w;
+views[? "sound_y"] = h;
 
 
 area = "main";
+last_area = area;
 
 selection = 0;
 
 
 main = ds_list_create();
 ds_list_add(main, my_large_font);
-ds_list_add(main, "Continue");
+ds_list_add(main, "Resume");
 ds_list_add(main, "Options");
-ds_list_add(main, "Main Menu");
-ds_list_add(main, "Exit Game");
+ds_list_add(main, "Exit");
 sections[? "main"] = main;
 
 
 options = ds_list_create();
 ds_list_add(options, my_large_font);
-ds_list_add(options, "Go Back");
-ds_list_add(options, "Debug UI");
+ds_list_add(options, "&lt;");
 ds_list_add(options, "Grid");
 ds_list_add(options, "Ghost");
+ds_list_add(options, "Random");
 ds_list_add(options, "Controls");
 ds_list_add(options, "Display");
+ds_list_add(options, "Sound");
 sections[? "options"] = options;
 
 
 controls = ds_list_create();
 ds_list_add(controls, my_large_font);
-ds_list_add(controls, "Go Back");
+ds_list_add(controls, "&lt;");
+ds_list_add(controls, "Simul Multi-dev In");
+ds_list_add(controls, "In Method");
+ds_list_add(controls, "Reset to Default");
+ds_list_add(controls, "Game Controls");
+ds_list_add(controls, "Menu Controls");
+sections[? "controls"] = controls;
+CONTROL_PAGE_NUMBER = 5;
+/*
+ds_list_add(controls, my_large_font);
+ds_list_add(controls, "&lt;");
 ds_list_add(controls, "Left");
 ds_list_add(controls, "Right");
 ds_list_add(controls, "CW");
@@ -76,13 +93,82 @@ ds_list_add(controls, "Hold");
 ds_list_add(controls, "Pause");
 sections[? "controls"] = controls;
 
-CONTROL_PAGE_NUMBER = 5;
-controls_surface = generate_controls_surface();
+//CONTROL_PAGE_NUMBER = 5;
+//controls_surface = generate_controls_surface();
+*/
+
+gamecontrols = ds_list_create();
+ds_list_add(gamecontrols, my_large_font);
+ds_list_add(gamecontrols, "&lt;");
+ds_list_add(gamecontrols, "Left");
+ds_list_add(gamecontrols, "Right");
+ds_list_add(gamecontrols, "CW");
+ds_list_add(gamecontrols, "CCW");
+ds_list_add(gamecontrols, "Hard");
+ds_list_add(gamecontrols, "Soft");
+ds_list_add(gamecontrols, "Hold");
+sections[? "gamecontrols"] = gamecontrols;
+
+
+menucontrols = ds_list_create();
+ds_list_add(menucontrols, my_large_font);
+ds_list_add(menucontrols, "&lt;");
+ds_list_add(menucontrols, "UP");
+ds_list_add(menucontrols, "DOWN");
+ds_list_add(menucontrols, "LEFT");
+ds_list_add(menucontrols, "RIGHT");
+ds_list_add(menucontrols, "ACCEPT");
+ds_list_add(menucontrols, "BACK");
+ds_list_add(menucontrols, "MENU");
+sections[? "menucontrols"] = menucontrols;
+
 
 
 display = ds_list_create();
-ds_list_add(display, "WINDOW");
-sections[? "display"] = controls;
+ds_list_add(display, my_large_font);
+ds_list_add(display, "Go Back");
+ds_list_add(display, "RES.");
+ds_list_add(display, "MAX FPS");
+ds_list_add(display, "Debug UI");
+sections[? "display"] = display;
+
+
+sound = ds_list_create();
+ds_list_add(sound, my_large_font);
+ds_list_add(sound, "Go Back");
+ds_list_add(sound, "MUSIC");
+ds_list_add(sound, "SFX");
+sections[? "sound"] = sound;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="1" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>ds_map_destroy(views);
+ds_list_destroy(main);
+ds_list_destroy(options);
+ds_list_destroy(controls);
+ds_list_destroy(gamecontrols);
+ds_list_destroy(menucontrols);
+ds_list_destroy(display);
+ds_list_destroy(sound);
 </string>
           </argument>
         </arguments>
@@ -107,90 +193,511 @@ sections[? "display"] = controls;
             <kind>1</kind>
             <string>event_inherited();
 
-if( x == goal_x and y == goal_y) 
+if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance ) 
 {
-    if(global.in_p[? mkeys.up]) { selection--; } 
-    else if(global.in_p[? mkeys.down]) { selection++; }
-    /*
-    if(keyboard_check_pressed(vk_up)) { selection--; } 
-    else if(keyboard_check_pressed(vk_down)) { selection++; }
-    */
-    if(area == "main")
+    if(!editmode)
     {
-        selection = clamp(selection, 0, ds_list_size(main)-1);
+        if(global.in_p[? mkeys.up]) { selection--; } 
+        else if(global.in_p[? mkeys.down]) { selection++; }
         
-        if(global.in_p[? mkeys.accept])
-        /*
-        if(keyboard_check_pressed(vk_space))
-        */
+        if(area == "main")
         {
-            if(selection == 0) { keyboard_key_press(vk_escape); } //Resume
-            else if(selection == 1)  //Options
-            { 
-                selection = 0 ;
-                area = "options"; 
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
+            selection = clamp(selection, 0, ds_list_size(main)-2); //-2 beccause 0 stores font and because it's zero indexed
+            
+            if(global.in_p[? mkeys.accept])
+            {
+                if(selection == 0) //Start Game 
+                { 
+                    keyboard_key_press(global.in_map[? mkeys.menu]); 
+                    keyboard_key_release(global.in_map[? mkeys.menu]); 
+                } 
+                else if(selection == 1)  //Options
+                { 
+                    selection = 0 ;
+                    last_area = area;
+                    area = "options"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 2) { game_end(); } //Exit
             }
-            else if(selection == 2) { room_goto(rm_main_menu); } //Main Menu
-            else if(selection == 3) { game_end(); } //Exit Game
+        }
+        else if(area == "options")
+        {
+            selection = clamp(selection, 0, ds_list_size(options)-2);
+            
+            if(global.in_p[? mkeys.accept])
+            {
+                if(selection == 0)
+                {
+                    last_area = area;
+                    area = "main";
+                    selection = 0;
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 1) //Grid 
+                { 
+                    global.grid = !global.grid; 
+                    save_settings();
+                } 
+                else if(selection == 2) //Ghost
+                { 
+                    global.ghost = !global.ghost;
+                    save_settings();
+                } 
+                else if(selection == 3) //Random
+                {
+                    if(global.rand_method == "Full") { global.rand_method = "Bag"; }
+                    else if(global.rand_method == "Bag") { global.rand_method = "Full"; }
+                    save_settings();
+                }
+                else if(selection == 4) //Controls
+                {
+                    last_area = area;
+                    area = "controls";
+                    gp_check();
+                    selection = 0;
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 5) //Display 
+                {
+                    area = last_area;
+                    area = "display";
+                    selection = 0;
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }  
+                else if(selection == 6) //Sound 
+                {
+                    area = last_area;
+                    area = "sound";
+                    selection = 0;
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }  
+            }
+        }
+        else if(area == "controls")
+        {
+            selection = clamp(selection, 0, ds_list_size(controls)-2);
+            
+            if(global.in_p[? mkeys.accept])
+            {
+                if(selection == 0) //Back
+                {
+                    selection = 0; 
+                    area = last_area;
+                    area = "options"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 1) //Multidevice input
+                {
+                    if(global.multi_input and ds_exists(global.in_method, ds_type_map)) { ds_map_destroy(global.in_method); }
+                    else if (!global.multi_input) { global.in_method = ds_map_create(); }    
+                
+                    global.multi_input = !global.multi_input;
+                    
+                    with(global.input_handler) { event_user(0); }
+                    
+                    save_settings();
+                }
+                else if(selection == 2) //Input method
+                {
+                    if(!global.multi_input)
+                    {
+                        var in = global.in_method;
+                        
+                        if(floor(in) == in_modes.gp) 
+                        {
+                            var slot = floor(in*100 - floor(in*100));
+                            var p = ds_list_find_value(global.pads, slot);
+                            if( !is_undefined(p) )
+                            {
+                                if(p == ds_list_size(global.pads)) { in = 0; }
+                                else { in = in_modes.gp + (global.pads[| p+1] / 100); }
+                            }
+                            else { in = 0; }
+                        }
+                        else if(in == in_modes.kb or in == in_modes.mouse) { in = in_modes.gp + global.pads[| 0]/100; }
+                        else { in++; }
+                        
+                        for(var i = 0; i &lt; mkeys.length; i++)
+                        {
+                            if(i == gkeys.length) { i++; }
+                            
+                            //CHANGE INPUTS TO DEFAULT
+                        }
+                        
+                        save_settings();
+                    }
+                }
+                else if(selection == 3) //Reset to Default
+                {
+                    with(global.input_handler) { event_user(0); }
+                    
+                    save_settings();
+                }
+                else if(selection == 4) //Gamecontrols
+                {
+                    selection = 0; 
+                    area = last_area;
+                    area = "gamecontrols"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 5) //Menucontrols
+                {
+                    selection = 0; 
+                    area = last_area;
+                    area = "menucontrols"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+            }
+        }
+        else if(area == "gamecontrols")
+        {
+            selection = clamp(selection, 0, ds_list_size(gamecontrols)-2);
+            
+            if(global.in_p[? mkeys.accept])
+            {
+                if(selection == 0) //Back
+                {
+                    selection = 0; 
+                    area = last_area;
+                    area = "controls"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else
+                {
+                    editmode = true;
+                    editready = false;
+                    io_clear(); 
+                }
+            }
+        }
+        else if(area == "menucontrols")
+        {
+            selection = clamp(selection, 0, ds_list_size(menucontrols)-2);
+            
+            if(global.in_p[? mkeys.accept])
+            {
+                if(selection == 0) //Back
+                {
+                    selection = 0; 
+                    area = last_area;
+                    area = "controls"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else
+                {
+                    editmode = true;
+                    editready = false;
+                    io_clear();
+                }
+            }
+        }
+        else if(area == "display")
+        {
+            selection = clamp(selection, 0, ds_list_size(display)-2);
+            
+            if(global.in_p[? mkeys.accept])
+            {
+                if(selection == 0) //Go Back
+                {
+                    selection = 0 ; 
+                    area = last_area;
+                    area = "options"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 1) // Resolution
+                {
+                    for(var index = 0; index &lt; array_length_1d(global.resolutions); index++)
+                    {
+                        if(global.resolutions[index] == global.resolution)
+                        {
+                            index++;
+                            if(index == array_length_1d(global.resolutions)) 
+                            { 
+                                global.resolution = global.resolutions[0]; 
+                                index = -1;
+                                break;
+                            }
+                            else 
+                            { 
+                                global.resolution = global.resolutions[index]; 
+                                index = -1;
+                                break;
+                            }
+                        }
+                    }
+                    if(index == array_length_1d(global.resolutions)) //CUSTOM RESOLUTION
+                    {
+                        global.resolution = global.resolutions[0];
+                    }
+                    resolution_change(global.resolution, true);
+                    save_settings();
+                }
+                else if(selection == 2) //Refresh Rate
+                {
+                    for(var index = 0; index &lt; array_length_1d(global.refresh_rates); index++)
+                    {
+                        if(global.refresh_rates[index] == global.refresh_rate)
+                        {
+                            index++;
+                            if(index == array_length_1d(global.refresh_rates)) 
+                                { global.refresh_rate = global.refresh_rates[0]; }
+                            else { global.refresh_rate = global.refresh_rates[index]; }
+                            room_speed = global.refresh_rate;
+                            MAX_SCROLL_SPEED = view_wport[0]*0.05*room_speed/60;
+                        }
+                    }
+                }  
+                else if(selection == 3)  //Debug overlay
+                {
+                    global.debug_overlay = !global.debug_overlay; 
+                    show_debug_overlay(global.debug_overlay); 
+                    save_settings();
+                } 
+            }
+        }
+        else if(area == "sound")
+        {
+            selection = clamp(selection, 0, ds_list_size(sound)-2);
+            
+            if(global.in_p[? mkeys.accept])
+            {
+                if(selection == 0) //Back
+                {
+                    selection = 0 ; 
+                    area = last_area;
+                    area = "options"; 
+                    goal_x = views[? area+"_x"];
+                    goal_y = views[? area+"_y"];
+                    old_x = x;
+                    old_y = y;
+                }
+                else if(selection == 1) //Music
+                {
+                    global.music_level += 5;
+                    if(global.music_level &gt;= 105) { global.music_level = 5; }
+                    save_settings();
+                }
+                else if(selection == 2) //SFX
+                {
+                    global.sfx_level += 5;
+                    if(global.sfx_level &gt;= 105) { global.sfx_level = 5; }
+                    save_settings();
+                }  
+            }
         }
     }
-    else if(area == "options")
+    else if(editmode) //Edit mode
     {
-        selection = clamp(selection, 0, ds_list_size(options)-2); //-2 beccause 0 stores font and because it's zero indexed
-        
-        //if(keyboard_check_pressed(vk_space))
-        if(global.in_p[? mkeys.accept])
+        if(!editready) { editready = true; } //A 1 frame delay 
+        else
         {
-            if(selection == 0) //Go Back
+            var to_set = 0;
+            if(area == "gamecontrols") { to_set = selection - 1; }
+            else if(area == "menucontrols") { to_set = selection + gkeys.length; }
+            
+            if((area == "gamecontrols" or area == "menucontrols") and selection != 0)
             {
-                area = "main";
-                selection = 0;
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
+                if(keyboard_key != 0 and (global.multi_input or (!global.multi_input and global.in_method == in_modes.kb)))
+                {
+                    global.in_map[? to_set] = keyboard_key;
+                    global.in_method[? to_set] = in_modes.kb;
+                    editmode = false;
+                    save_settings();
+                }
+                else if(mouse_button != 0 and (global.multi_input or (!global.multi_input and global.in_method == in_modes.mouse)))
+                {
+                    global.in_map[? to_set] = mouse_button;
+                    global.in_method[? to_set] = in_modes.mouse;
+                    editmode = false;
+                    save_settings();
+                }
+                else if(ds_list_size(global.pads) &gt; 0)
+                {
+                    for(var i = 0; i &lt; ds_list_size(global.pads); i++)
+                    {
+                        if(gamepad_button_check_pressed(global.pads[| i], gp_face1) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_face1;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_face2) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_face2;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_face3) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_face3;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_face4) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_face4;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderl) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_shoulderl;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderr) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_shoulderr;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderlb) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_shoulderlb;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_shoulderrb) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_shoulderrb;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_select) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_select;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_start) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_start;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_stickl) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_stickl;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_stickr) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_stickr;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padu) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_padu;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padd) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_padd;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padl) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp))) 
+                        {
+                            global.in_map[? to_set] = gp_padl;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else if(gamepad_button_check_pressed(global.pads[| i], gp_padr) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp)))
+                        {
+                            global.in_map[? to_set] = gp_padr;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100);
+                            editmode = false;
+                            save_settings();
+                        }
+                        else
+                        {
+                            if(abs(gamepad_axis_value(global.pads[| i], gp_axislh)) &gt; abs(gamepad_axis_value(global.pads[| i], gp_axislv)) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp)))
+                            {
+                                global.in_map[? to_set] = gp_axislh;
+                                global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100) + (2 + sign(gamepad_axis_value(global.pads[| i], gp_axislh)))/1000;
+                                editmode = false;
+                                save_settings();
+                            }
+                            else if(abs(gamepad_axis_value(global.pads[| i], gp_axislh)) &lt; abs(gamepad_axis_value(global.pads[| i], gp_axislv)) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp)))
+                            {
+                                global.in_map[? to_set] = gp_axislv;
+                                global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100) + (2 + sign(gamepad_axis_value(global.pads[| i], gp_axislv)))/1000;
+                                editmode = false;
+                                save_settings();
+                            }
+                            else if(abs(gamepad_axis_value(global.pads[| i], gp_axisrh)) &gt; abs(gamepad_axis_value(global.pads[| i], gp_axisrv)) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp)))
+                            {
+                                global.in_map[? to_set] = gp_axisrh;
+                                global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100) + (2 + sign(gamepad_axis_value(global.pads[| i], gp_axisrh)))/1000;
+                                editmode = false;
+                                save_settings();
+                            }
+                            else if(abs(gamepad_axis_value(global.pads[| i], gp_axisrh)) &lt; abs(gamepad_axis_value(global.pads[| i], gp_axisrv)) and (global.multi_input or (!global.multi_input and floor(global.in_method) == in_modes.gp)))
+                            {
+                                global.in_map[? to_set] = gp_axisrv;
+                                global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100) + (2 + sign(gamepad_axis_value(global.pads[| i], gp_axisrv)))/1000;
+                                editmode = false;
+                                save_settings();
+                            }
+                        }
+                    }
+                }  
+                
             }
-            else if(selection == 1)  //Debug overlay
-            {
-                global.debug_overlay = !global.debug_overlay; 
-                show_debug_overlay(global.debug_overlay); 
-            } 
-            else if(selection == 2){ global.grid = !global.grid; } //Grid 
-            else if(selection == 3) //Ghost
-            { 
-                global.ghost = !global.ghost;
-                //with(obj_ghostSeg) { visible = global.ghost; }
-            } 
-            else if(selection == 4) //Controls
-            {
-                area = "controls";
-                selection = 0;
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
-            }
-            else if(selection == 6) //Display 
-            {
-                area = "display";
-                selection = 0;
-                goal_x = views[? area+"_x"];
-                goal_y = views[? area+"_y"];
-                old_x = x;
-                old_y = y;
-            }  
         }
-    }
-    else if(area == "controls")
-    {
-        //if(keyboard_check_pressed(vk_up)) { selection--; } 
-        //else if(keyboard_check_pressed(vk_down)) { selection++; }
-        selection = clamp(selection, 0, ds_list_size(controls)-2);
-    }
+    } 
 }
 
 
@@ -216,86 +723,275 @@ if( x == goal_x and y == goal_y)
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>draw_set_color(c_gray);
-draw_set_alpha(0.7);
+            <string>
+draw_set_color(c_gray);
+draw_set_alpha(0.5);
 draw_rectangle(0, 0, w, h, false);
 draw_set_alpha(1);
+
 
 draw_set_color(c_black);
 draw_set_valign(fa_top);
 draw_set_halign(fa_center);
 draw_set_font(my_huge_font);
-draw_text(w/2, string_height("PAUSED")*0.25, "PAUSED");
+draw_text(w/2, string_height("TETRIS")*0.25, "TETRIS");
 draw_set_font(my_font);
 
 
 
-//MAIN PAUSE MENU
+//MAIN MENU
 
 draw_set_valign(fa_middle);
 
 if(goal_x == x and goal_y = y)
 {
-    draw_set_color(c_teal);
+    if(!editmode) { draw_set_color(c_teal); } 
+    else { draw_set_color(c_red); }  
     draw_set_font( ds_list_find_value( sections[? area], 0) );
-    var start_height = 0
-    if(area == "main") { start_height = h/2; }
-    else if(area == "options") { start_height = h/3; }
-    else if(area == "controls") { start_height = h/3; }
-    else if(area == "display") { start_height = h/3; }
-    draw_rectangle( (w*PADDING/2), ((start_height)-(box_large_height/2)+(large_height*selection)), (w-(w*PADDING/2)), ((start_height)+(box_large_height/2)+(large_height*selection)), false);
+    if(area == "controls" and selection &gt; CONTROL_PAGE_NUMBER) 
+    {
+        draw_rectangle( (w*PADDING/2), ((h/3)-(box_large_height/2)+(large_height*CONTROL_PAGE_NUMBER)), (w-(w*PADDING/2)), ((h/3)+(box_large_height/2)+(large_height*CONTROL_PAGE_NUMBER)), false);
+    }
+    else
+    {
+        var start_height = 0
+        if(area == "main") { start_height = h/2; }
+        else if(area == "options") { start_height = h/3; }
+        else if(area == "controls") { start_height = h/3; }
+        else if(area == "gamecontrols") { start_height = h/3; }
+        else if(area == "menucontrols") { start_height = h/3; }
+        else if(area == "display") { start_height = h/3; }
+        else if(area == "sound") { start_height = h/3; }
+        draw_rectangle( (w*PADDING/2), ((start_height)-(box_large_height/2)+(large_height*selection)), (w-(w*PADDING/2)), ((start_height)+(box_large_height/2)+(large_height*selection)), false);
+    }
 }
-
 
 draw_set_color(c_black);
 
-draw_set_font(main[|0]);
-for(i = 0; i &lt; ds_list_size(main)-1; i++)
+//MAIN
+if(area == "main" or (last_area == "main" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
 {
-    draw_text(w/2-x, h/2+large_height*i-y, main[|i+1]);
+    draw_set_font(main[|0]);
+    for(i = 0; i &lt; ds_list_size(main)-1; i++)
+    {
+        draw_text(w/2-x, h/2+large_height*i-y, main[|i+1]);
+    }
 }
-
 
 //OPTIONS
-draw_set_font(my_huge_font);
-draw_text(w/2+w-x, string_height("OPTIONS")*1.5*(1+PADDING), "OPTIONS");
-draw_set_font(options[|0]);
-draw_set_halign(fa_left);
-for(i = 0; i &lt; ds_list_size(options)-1; i++)
+if(area == "options" or (last_area == "options" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
 {
-    draw_text(w*PADDING/2+w-x, h/3+large_height*i-y, options[|i+1]);
-    draw_set_halign(fa_right);
-    if(i == 1) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.debug_overlay, "oo")); }
-    else if(i == 2) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.grid, "oo")); }
-    else if(i == 3) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.ghost, "oo")); }
-    else if(i == 4) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "&gt;"); }
+    draw_set_font(my_huge_font);
+    draw_text(w/2+w-x, string_height("OPTIONS")*1.5*(1+PADDING) - y, "OPTIONS");
+    draw_set_font(options[|0]);
     draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(options)-1; i++)
+    {
+        draw_text(w*PADDING/2+w-x, h/3+large_height*i-y, options[|i+1]);
+        draw_set_halign(fa_right);
+        if(i == 0) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "Go Back"); }
+        else if(i == 1) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.grid, "oo")); }
+        else if(i == 2) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.ghost, "oo")); }
+        else if(i == 3) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, global.rand_method); }
+        else if(i == 4) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "&gt;"); }
+        else if(i == 5) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
+        else if(i == 6) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
+        draw_set_halign(fa_left);
+    }
 }
-
 
 //CONTROLS
-draw_set_font(my_huge_font);
-draw_set_halign(fa_center);
-draw_text(w/2+w*2-x, string_height("CONTROLS")*1.5*(1+PADDING), "CONTROLS");
-draw_set_font(controls[|0]);
-draw_set_halign(fa_left);
-for(i = 0; i &lt; ds_list_size(controls)-1; i++)
+if(area == "controls" or (last_area == "controls" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
 {
-    draw_text(w*PADDING/2+w*2-x, h/3+large_height*i-y, controls[|i+1]);
-    draw_set_halign(fa_right);
-    if(i == 1) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.debug_overlay, "oo")); }
-    else if(i == 2) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.grid, "oo")); }
-    else if(i == 3) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.ghost, "oo")); }
-    else if(i == 4) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, global.rand_method); }
-    else if(i == 5) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "&gt;"); }
+    draw_set_font(my_huge_font);
+    draw_set_halign(fa_center);
+    draw_text(w/2+w*2-x, string_height("CONTROLS")*1.5*(1+PADDING - y), "CONTROLS");
+    draw_set_font(controls[|0]);
     draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(controls)-1; i++)
+    {
+        draw_text(w*PADDING/2+w*2-x, h/3+large_height*i-y, controls[|i+1]);
+        draw_set_halign(fa_right);
+        if(i == 0) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "Go Back"); }
+        else if(i == 1) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.multi_input, "oo")); }
+        else if(i == 2) 
+        { 
+            var text = "N/A";
+            if(!global.multi_input) 
+            { 
+                var m = global.in_method;
+                if(m == in_modes.kb) { text = "Keyboard"; }
+                if(m == in_modes.mouse) { text = "Mouse"; }
+                if(!is_undefined(m) and floor(m) == in_modes.gp)  { text = "Gamepad " + string(floor(m*100 - floor(m*100))); }
+            }
+            draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, text); 
+        }
+        else if(i == 3) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
+        else if(i == 4) { draw_text(3*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
+        draw_set_halign(fa_left);
+    }
+    /*
+    if(!surface_exists(controls_surface)) { controls_surface = generate_controls_surface(); }
+    var surf_offset = 0;
+    var surf_y = h/3-large_height*0.5;
+    triangle_w = 15;
+    triangle_h = 15;
+    if(selection &gt; CONTROL_PAGE_NUMBER) 
+    { 
+        surf_offset = selection - CONTROL_PAGE_NUMBER; 
+    
+        draw_set_color(c_black);
+        draw_triangle(  w*2+w/2-x-triangle_w/2, surf_y-10,
+                        w*2+w/2-x, surf_y-10-triangle_h,
+                        w*2+w/2-x+triangle_w/2, surf_y-10,
+                        false);
+    }
+    else
+    {
+        draw_set_color(c_black);
+        draw_triangle(  w*2+w/2-x-triangle_w/2, view_hview[0]-20-triangle_h,
+                        w*2+w/2-x, view_hview[0]-20,
+                        w*2+w/2-x+triangle_w/2, view_hview[0]-20-triangle_h,
+                        false);
+    }
+    var temp_surf = surface_create( surface_get_width(controls_surface), (CONTROL_PAGE_NUMBER+1)*large_height);
+    surface_copy_part(temp_surf, 0, 0, controls_surface, 0, surf_offset*large_height, surface_get_width(controls_surface), room_height-surf_y);
+    draw_surface(temp_surf, w*2-x+w*PADDING/2, surf_y);
+    surface_free(temp_surf);
+    */
+}
+
+
+//GAMECONTROLS
+if(area == "gamecontrols" or (last_area == "gamecontrols" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(my_huge_font);
+    draw_set_halign(fa_center);
+    draw_text(w/2+w*2-x, -h+string_height("CONTROLS")*1.5*(1+PADDING - y), "CONTROLS");
+    draw_set_font(gamecontrols[|0]);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(gamecontrols)-1; i++)
+    {
+        draw_text(w*PADDING/2+w*2-x, -h+h/3+large_height*i-y, gamecontrols[|i+1]);
+        draw_set_halign(fa_right);
+        if(global.multi_input)
+        {
+            if(i == 0) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, "Go Back"); }
+            else if(i == 1) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.left], global.in_method[? gkeys.left]) + " | " + string(device_to_string(global.in_method[? gkeys.left]))); }
+            else if(i == 2) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.right], global.in_method[? gkeys.right]) + " | " + string(device_to_string(global.in_method[? gkeys.right]))); }
+            else if(i == 3) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.cw], global.in_method[? gkeys.cw]) + " | " + string(device_to_string(global.in_method[? gkeys.cw]))); }
+            else if(i == 4) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.ccw], global.in_method[? gkeys.ccw]) + " | " + string(device_to_string(global.in_method[? gkeys.ccw]))); }
+            else if(i == 5) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hd], global.in_method[? gkeys.hd]) + " | " + string(device_to_string(global.in_method[? gkeys.hd]))); }
+            else if(i == 6) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.sd], global.in_method[? gkeys.sd]) + " | " + string(device_to_string(global.in_method[? gkeys.sd]))); }
+            else if(i == 7) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hold], global.in_method[? gkeys.hold]) + " | " + string(device_to_string(global.in_method[? gkeys.hold]))); }
+        }
+        else 
+        {
+            if(i == 0) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, "Go Back"); }
+            else if(i == 1) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.left], global.in_method)); }
+            else if(i == 2) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.right], global.in_method)); }
+            else if(i == 3) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.cw], global.in_method)); }
+            else if(i == 4) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.ccw], global.in_method)); }
+            else if(i == 5) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hd], global.in_method)); }
+            else if(i == 6) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.sd], global.in_method)); }
+            else if(i == 7) { draw_text(3*w-x-w*PADDING/2, -h+h/3+large_height*i-y, input_to_string(global.in_map[? gkeys.hold], global.in_method)); }
+        }
+        draw_set_halign(fa_left);
+    }
+}
+
+
+//MENUCONTROLS
+if(area == "menucontrols" or (last_area == "menucontrols" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(my_huge_font);
+    draw_set_halign(fa_center);
+    draw_text(w/2+w*2-x, h+string_height("CONTROLS")*1.5*(1+PADDING - y), "CONTROLS");
+    draw_set_font(menucontrols[|0]);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(menucontrols)-1; i++)
+    {
+        draw_text(w*PADDING/2+w*2-x, h+h/3+large_height*i-y, menucontrols[|i+1]);
+        draw_set_halign(fa_right);
+        if(i == 0) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, "Go Back"); }
+        else if(i == 1) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.up], global.in_method[? mkeys.up]) + " | " + string(device_to_string(global.in_method[? mkeys.up]))); }
+        else if(i == 2) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.down], global.in_method[? mkeys.down]) + " | " + string(device_to_string(global.in_method[? mkeys.down]))); }
+        else if(i == 3) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.left], global.in_method[? mkeys.left]) + " | " + string(device_to_string(global.in_method[? mkeys.left]))); }
+        else if(i == 4) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.right], global.in_method[? mkeys.right]) + " | " + string(device_to_string(global.in_method[? mkeys.right]))); }
+        else if(i == 5) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.accept], global.in_method[? mkeys.accept]) + " | " + string(device_to_string(global.in_method[? mkeys.accept]))); }
+        else if(i == 6) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.back], global.in_method[? mkeys.back]) + " | " + string(device_to_string(global.in_method[? mkeys.back]))); }
+        else if(i == 7) { draw_text(3*w-x-w*PADDING/2, h+h/3+large_height*i-y, input_to_string(global.in_map[? mkeys.menu], global.in_method[? mkeys.menu]) + " | " + string(device_to_string(global.in_method[? mkeys.menu]))); }
+        draw_set_halign(fa_left);
+    }
+}
+
+
+//DISPLAY
+if(area == "display" or (last_area == "display" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(my_huge_font);
+    draw_set_halign(fa_center);
+    draw_text(w-x+w/2, string_height("OPTIONS")*1.5*(1+PADDING)-h-y, "DISPLAY OPTIONS");
+    draw_set_font(display[|0]);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(display)-1; i++)
+    {
+        draw_text(w+w*PADDING/2-x, -y-h+h/3+large_height*i, display[|i+1]);
+        draw_set_halign(fa_right);
+        if(i == 0) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, "Go Back"); }
+        else if(i == 1) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, string(global.resolution)); }
+        else if(i == 2) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, string(global.refresh_rate)); }
+        else if(i == 3) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.debug_overlay, "oo")); }
+        draw_set_halign(fa_left);
+    } 
+}
+
+
+//SOUND
+if(area == "sound" or (last_area == "sound" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(my_huge_font);
+    draw_set_halign(fa_center);
+    draw_text(w-x+w/2, string_height("OPTIONS")*1.5*(1+PADDING)+h-y, "AUDIO OPTIONS");
+    draw_set_font(sound[|0]);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(sound)-1; i++)
+    {
+        draw_text(w+w*PADDING/2-x, -y+h+h/3+large_height*i, sound[|i+1]);
+        draw_set_halign(fa_right);
+        if(i == 0) { draw_text(w*2-w*PADDING/2-x, -y+h+h/3+large_height*i, "Go Back"); }
+        else if(i == 1) { draw_text(w*2-w*PADDING/2-x, -y+h+h/3+large_height*i, string(global.music_level)); }
+        else if(i == 2) { draw_text(w*2-w*PADDING/2-x, -y+h+h/3+large_height*i, string(global.sfx_level)); }
+    //    else if(i == 3) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.debug_overlay, "oo")); }
+        draw_set_halign(fa_left);
+    } 
 }
     
-
-
+    
 draw_set_valign(fa_top);
 draw_set_halign(fa_left);
 draw_set_font(my_font);
+
+
+if(global.debug_overlay)
+{
+    draw_set_valign(fa_bottom);
+    draw_set_halign(fa_left);
+    draw_set_font(my_font);
+    draw_set_color(c_white);
+    draw_text_color_outline(10, 50, "FPS_REAL: " + string(fps_real), c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
+//    draw_text_color_outline(10, 50 + string_height("FPS"), "FPS_AVG: " + string(average_fps), c_white, c_white,  1, c_black, c_black, 1, 2, 3, 1, 1, 0);
+    draw_text_color_outline(10, 50 + string_height("FPS")*2, "DISPLAY_FPS: " + string(1000000/delta_time), c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
+    draw_text_color_outline(10, 50 + string_height("FPS")*3, "FRAME_TIME (ms): " + string_format(delta_time/1000, 5, 3), c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
+    
+    draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*6, "X_DONE: " + string(boolean_replace(x == goal_x, "tf")), c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
+    draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*5, "Y_DONE: " + string(boolean_replace(y == goal_y, "tf")), c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
+    draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*4, "X: " + string(x), c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
+    draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*3, "Y: " + string(y), c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
+    draw_text_color_outline(10, view_hview[0]-10-string_height("IG")*2, "GOAL_X: " + string(goal_x), c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
+    draw_text_color_outline(10, view_hview[0]-10-string_height("GOAL_X"), "GOAL_Y: " + string(goal_y), c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
+    draw_text_color_outline(10, view_hview[0]-10, "AREA: " + area, c_white, c_white,  1, c_black, c_black, 1, 2, 4, 1, 1, 0);
+}
 </string>
           </argument>
         </arguments>
