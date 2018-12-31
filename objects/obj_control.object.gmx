@@ -26,7 +26,10 @@
           <argument>
             <kind>1</kind>
             <string>global.control = id;
-var segSurf = surface_create(global.segmentSize, global.segmentSize);
+
+clearStaticSurf = false;
+
+var segSurf = surface_create_log(global.segmentSize, global.segmentSize);
 surface_set_target(segSurf);
 draw_clear(c_white);
 surface_reset_target();
@@ -51,7 +54,7 @@ hardDropTimer = -1;
 spawnPieceTimer = -1;
 clearDelayTimer = -1;
 
-global.clear_surf = surface_create(room_width, room_height);
+global.clear_surf = surface_create_log(room_width, room_height);
 global.clearedLines = ds_list_create();
 
 global.clear_part_system = part_system_create();
@@ -145,9 +148,9 @@ music = audio_play_sound(snd_ThemeA, 100, true);
 audio_sound_gain(music, global.music_level/100, 0);
 
 
-room_surf = surface_create(room_width+1, room_height);
+room_surf = surface_create_log(room_width+1, room_height);
 
-grid_surf = surface_create(room_width+1, room_height); 
+grid_surf = surface_create_log(room_width+1, room_height); 
 surface_free(grid_surf); //Free so that the grid draw to create the lines will trigger
 
 
@@ -319,7 +322,7 @@ if(hardDropTimer &gt; -1)
     }
 }
 
-if(!surface_exists(global.clear_surf)) { global.clear_surf = surface_create(room_width, room_height); } 
+if(!surface_exists(global.clear_surf)) { global.clear_surf = surface_create_log(room_width, room_height); } 
 surface_set_target(global.clear_surf);
 draw_clear_alpha(c_black, 0);
 surface_reset_target();
@@ -337,11 +340,14 @@ if(!global.canSpawnNew)
                 moveLinesDown(global.clearedLines[| _i]);
             }
             ds_list_clear(global.clearedLines);
+            clearStaticSurf = true;
+            /*
             if(surface_exists(global.STATIC_SEGMENT_SURFACE)) 
             { 
                 surface_free(global.STATIC_SEGMENT_SURFACE); 
                 with(obj_segment) { visible = true; } 
             }
+            */
             clearDelayTimer = -1;
             
             global.canSpawnNew = false;
@@ -418,8 +424,18 @@ if(!global.canSpawnNew)
 if(!surface_exists(global.STATIC_SEGMENT_SURFACE))
 {
     //If the suface was destroyed, recreate it and make all segments redraw themselves onto it once
-    global.STATIC_SEGMENT_SURFACE = surface_create(room_width, room_height);
+    global.STATIC_SEGMENT_SURFACE = surface_create_log(room_width, room_height);
+    show_debug_message("SURFACE ID: " + string(global.STATIC_SEGMENT_SURFACE));
     with(obj_segment) { visible = true; }
+}
+if(clearStaticSurf)
+{
+    show_debug_message("CLEARING STATIC SURF");
+    surface_set_target(global.STATIC_SEGMENT_SURFACE);
+    draw_clear_alpha(c_black, 0);
+    surface_reset_target();
+    clearStaticSurf = false;
+    with(obj_segment) { visible = true; } 
 }
 </string>
           </argument>
@@ -491,14 +507,14 @@ draw_surface(room_surf, global.GUI_LEFT_SIZE, 0);
             <kind>1</kind>
             <string>if(!surface_exists(room_surf)) 
 { 
-    room_surf = surface_create(room_width+1, room_height); 
+    room_surf = surface_create_log(room_width+1, room_height); 
     surface_set_target(room_surf);
     draw_clear_alpha(c_black, 0);
     surface_reset_target();
 } 
 if(!surface_exists(global.clear_surf)) 
 { 
-    global.clear_surf = surface_create(room_width, room_height); 
+    global.clear_surf = surface_create_log(room_width, room_height); 
     surface_set_target(global.clear_surf);
     draw_clear_alpha(c_black, 0);
     surface_reset_target();
@@ -520,7 +536,7 @@ if(global.grid and !surface_exists(grid_surf))
     //grid_surf = surface_create(room_width+1, room_height); 
     var disp_w = global.BLOCKS_WIDE*global.segmentSize;
     var disp_h = global.BLOCKS_TALL*global.segmentSize;
-    grid_surf = surface_create(disp_w+1, disp_h+1);
+    grid_surf = surface_create_log(disp_w+1, disp_h+1);
     surface_set_target(grid_surf);
     draw_clear_alpha(c_black, 0);
     //VERTICAL
@@ -537,7 +553,7 @@ if(!surface_exists(global.STATIC_SEGMENT_SURFACE))
 {
     show_debug_message("REBUILDING");
     //If the suface was destroyed, recreate it and make all segments redraw themselves onto it once
-    global.STATIC_SEGMENT_SURFACE = surface_create(room_width, room_height);
+    global.STATIC_SEGMENT_SURFACE = surface_create_log(room_width, room_height);
     with(obj_segment) { visible = true; }
 }
 </string>
@@ -578,7 +594,7 @@ fnt_height = 40;
 if(!surface_exists(guiSurf))
 {
     draw_set_color(c_black);
-    guiSurf = surface_create(view_wview[0], view_hview[0]);
+    guiSurf = surface_create_log(view_wview[0], view_hview[0]);
     surface_set_target(guiSurf);
     
     draw_set_colour(c_white);

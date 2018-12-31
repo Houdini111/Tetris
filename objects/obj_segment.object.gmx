@@ -68,9 +68,11 @@ if(!global.paused)
     } 
     else 
     { 
+        //show_debug_message("DRAW STATIC SEGMENT");
         surface_set_target(global.STATIC_SEGMENT_SURFACE);
         draw_rectangle(x*global.segmentSize+1, y*global.segmentSize, (x+1)*global.segmentSize, (y+1)*global.segmentSize-1, false);
-        visible = false;;
+        //draw_rectangle((x+0.25)*global.segmentSize+1, (y+0.25)*global.segmentSize, (x+.75)*global.segmentSize, (y+.75)*global.segmentSize-1, false);
+        visible = false;
     }
     surface_reset_target();
 }

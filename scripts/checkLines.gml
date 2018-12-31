@@ -1,6 +1,23 @@
 var clearCount = 0;
 var parents = ds_list_create();
-
+/*
+print("BEFORE");
+var _b = '░';
+var _s = '■';
+var _line = "";
+var _v = noone;
+for(var gy = 0; gy < global.BLOCKS_TALL+4; gy++)
+{
+    line = "";
+    for(var gx = 0; gx < global.BLOCKS_WIDE; gx++)
+    {
+        if(global.segArr[gx, gy] == noone) { line += _b; }
+        else { line += _s; }
+    }
+    print(line);
+}
+print("---------");
+*/
 //for(var h = room_height-.1; h >= 0; h -= global.segmentSize)
 for(var h = global.BLOCKS_TALL-1+4; h >= 0; h--)
 {
@@ -24,7 +41,7 @@ for(var h = global.BLOCKS_TALL-1+4; h >= 0; h--)
     if(isSolid)
     {
         clearCount++;
-
+        show_debug_message("DESTROY ROW AT " + string(h));
         //for(var w = 0; w < room_width; w += global.segmentSize) 
         for(var w = 0; w < global.BLOCKS_WIDE; w++)
         { 
@@ -39,6 +56,7 @@ for(var h = global.BLOCKS_TALL-1+4; h >= 0; h--)
             else if(p.segments[2] == inst) { p.segments[2] = noone; }
             else if(p.segments[3] == inst) { p.segments[3] = noone; }
             
+            //show_debug_message("DESTROY BLOCK AT (" + string(w) + ", " + string(h) + ")");
             instance_destroy(inst);
             global.segArr[w, h] = noone;
             //print(string(w) + ", " + string(h));
@@ -49,7 +67,8 @@ for(var h = global.BLOCKS_TALL-1+4; h >= 0; h--)
         if(global.clear_speed == 0) 
         { 
             moveLinesDown(h);
-            h += global.segmentSize;
+            //h += global.segmentSize;
+            h += 1;
             //if(surface_exists(global.STATIC_SEGMENT_SURFACE)) { surface_free(global.STATIC_SEGMENT_SURFACE); }
         }
         else 
@@ -60,13 +79,7 @@ for(var h = global.BLOCKS_TALL-1+4; h >= 0; h--)
             global.control.clearDelayTimer = global.clear_speed * room_speed;
         }
         
-        if(surface_exists(global.STATIC_SEGMENT_SURFACE)) 
-        { 
-            //show_debug_message("LINE CLEAR");
-            surface_free(global.STATIC_SEGMENT_SURFACE); 
-            with(obj_segment) { visible = true; } 
-        }
-        
+        global.control.clearStaticSurf = true;
     }
 }
 
@@ -84,5 +97,17 @@ global.lines += clearCount;
 global.level += clearCount;
 if(global.level > 500) { global.fallSpeed = global.levels[500]/256; }
 else { global.fallSpeed = global.levels[global.level]/256; } 
-
-
+/*
+print("AFTER");
+for(var gy = 0; gy < global.BLOCKS_TALL+4; gy++)
+{
+    line = "";
+    for(var gx = 0; gx < global.BLOCKS_WIDE; gx++)
+    {
+        if(global.segArr[gx, gy] == noone) { line += _b; }
+        else { line += _s; }
+    }
+    print(line);
+}
+print("---------");
+*/

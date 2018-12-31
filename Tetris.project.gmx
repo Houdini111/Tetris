@@ -365,6 +365,7 @@
       <script>scripts\array.gml</script>
       <script>scripts\print.gml</script>
       <script>scripts\print_map.gml</script>
+      <script>scripts\surface_create_log.gml</script>
     </scripts>
     <script>scripts\ini_check_and_delete.gml</script>
   </scripts>

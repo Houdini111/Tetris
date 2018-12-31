@@ -3,7 +3,7 @@ draw_set_font(controls[|0]);
 _fnt_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+PADDING); 
 var _height = _fnt_height * ds_list_size(controls);
 var _width = w-w*PADDING;
-var _surf = surface_create(_width, _height);
+var _surf = surface_create_log(_width, _height);
 surface_set_target(_surf);
 draw_set_halign(fa_left);
 

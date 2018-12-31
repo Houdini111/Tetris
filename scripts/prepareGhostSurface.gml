@@ -4,7 +4,7 @@ ghostY = min(ghosts[0].y, ghosts[1].y, ghosts[2].y, ghosts[3].y)-1;
 //ghostY = min(ghosts[0].y, ghosts[1].y, ghosts[2].y, ghosts[3].y)-global.segmentSize;
 if(!surface_exists(global.ghostSurf)) 
 {
-    global.ghostSurf = surface_create(4*global.segmentSize, 4*global.segmentSize); 
+    global.ghostSurf = surface_create_log(4*global.segmentSize, 4*global.segmentSize); 
     //print("CREATE GHOST SURFACE");
 }
 surface_set_target(global.ghostSurf);

@@ -27,7 +27,7 @@
             <kind>1</kind>
             <string>SEGMENT_SIZE = global.segmentSize; //Local Copy
 
-surf = surface_create(4*global.segmentSize, 4*global.segmentSize);
+surf = surface_create_log(4*global.segmentSize, 4*global.segmentSize);
 
 falling = true;
 canFall = false;
@@ -523,7 +523,7 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                         good[i] = false; 
                         failed = true;
                     } 
-                    else if(segments[i].y &gt; global.BLOCKS_TALL+4 )
+                    else if(segments[i].y &gt;= global.BLOCKS_TALL+4 )
                     {
                         good[i] = false;
                         failed = true;
@@ -533,6 +533,28 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                         var hit = global.segArr[segments[i].x, segments[i].y];
                         if(hit != noone and hit.parent != id)
                         {
+                            good[i] = false; 
+                            failed = true;
+                        }
+                    }
+                }
+                for(i = 0; i &lt; 4; i++)
+                {
+                    if( segments[i].x &lt; 0 or segments[i].x &gt;= global.BLOCKS_WIDE ) 
+                    { 
+                        good[i] = false; 
+                        failed = true;
+                    } 
+                    else if(segments[i].y &gt;= global.BLOCKS_TALL+4 )
+                    {
+                        good[i] = false;
+                        failed = true;
+                    }
+                    else
+                    {
+                        var _hit = global.segArr[segments[i].x, segments[i].y];
+                        if( _hit != noone and _hit.parent != id )
+                        { 
                             good[i] = false; 
                             failed = true;
                         }
@@ -706,12 +728,13 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                         var hit = global.segArr[segments[i].x, segments[i].y];
                         if(hit != noone and hit.parent != id)
                         {
+                            //print("ROTATION COLLISION FOR " + string(i) + " AT (" + string(segments[i].x) + ", " + string(segments[i].y) + ") WITH " + string(hit));
                             good[i] = false; 
                             failed = true;
                         }
                     }
                 }
-                
+                print(string(good[0]) + " " + string(good[1]) + " " + string(good[2]) + " " + string(good[3]));
                 if(!failed)
                 {
                     rot -= 90;
@@ -725,6 +748,7 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                     //X
                     if(!good[0] and good[1] and good[2] and good[3]) 
                     {
+                        //print(1);
                         var safe = true;
                         if(segments[3].y-1 &lt; 0) { safe = false; }
                         else
@@ -735,12 +759,13 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                         
                         if(safe)
                         {
+                            //print("SAFE");
                             failed = false; 
                             
-                            segments[0].x--;
-                            segments[1].x--;
-                            segments[2].x--;
-                            segments[3].x--;
+                            segments[0].y--;
+                            segments[1].y--;
+                            segments[2].y--;
+                            segments[3].y--;
                             
                             rot -= 90;
                             if(rot &lt;= -90) { rot = 270; }  
@@ -760,6 +785,7 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                     //O
                     else if(good[0] and good[1] and good[2] and !good[3]) 
                     {
+                        //print(2);
                         var safe = true;
                         if(segments[0].y + 1 &gt;= global.BLOCK_TALL+4) { safe = false; }
                         else
@@ -770,6 +796,7 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                         
                         if(safe)
                         {
+                            //print("SAFE");
                             failed = false; 
                             
                             segments[0].y++;
@@ -795,6 +822,7 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                     //_
                     else if(!good[1] and good[2] and good[3])
                     {
+                        //print(3);
                         var safe = true;
                         if(segments[0].y-2 &lt;= 0) { safe = false; }
                         else
@@ -806,7 +834,8 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                         
                         if(safe)
                         {
-                            print("SAFE BUMP UP TWO");
+                            //print("SAFE");
+                            //print("SAFE BUMP UP TWO");
                             failed = false; 
                             
                             segments[0].y -= 2;
@@ -832,6 +861,7 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                     //O
                     else if(good[0] and good[1] and !good[2])
                     {
+                        //print(4);
                         var safe = true;
                         if(segments[0]+2 &gt; global.BLOCKS_TALL+4) { safe = false; }
                         else
@@ -843,6 +873,7 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
                         
                         if(safe)
                         {
+                            //print("SAFE");
                             failed = false; 
                             
                             segments[0].y += 2;
@@ -2025,7 +2056,7 @@ solidify(id);
           <argument>
             <kind>1</kind>
             <string>///Prepare surface
-if(!surface_exists(surf)) { surface_create(4*global.segmentSize, 4*global.segmentSize); }
+if(!surface_exists(surf)) { surface_create_log(4*global.segmentSize, 4*global.segmentSize); }
 surface_set_target(surf);
 draw_clear_alpha(c_black, 0);
 surface_reset_target();

@@ -39,7 +39,7 @@ show_debug_message(string(view_xport[0]) + ", " + string(view_yport[0]));
 */
 
 
-global.STATIC_SEGMENT_SURFACE = surface_create(room_width, room_height);
+global.STATIC_SEGMENT_SURFACE = surface_create_log(room_width, room_height);
 
 /*
 global.test1 = make_color_rgb(0, 0, 0);
