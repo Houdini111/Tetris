@@ -64,6 +64,7 @@ ds_list_add(options, "&lt;");
 ds_list_add(options, "Grid");
 ds_list_add(options, "Ghost");
 ds_list_add(options, "Random");
+ds_list_add(options, "Level Mode");
 ds_list_add(options, "Controls");
 ds_list_add(options, "Display");
 ds_list_add(options, "Sound");
@@ -243,7 +244,14 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                 } 
                 else if(selection == 2) //Ghost
                 { 
-                    global.ghost = !global.ghost;
+                    //global.ghost = !global.ghost;
+                    global.ghost += 1;
+                    //-1 for being zero indexed
+                    //-1 again for having NONE be -1 (so technically it's -1 indexed)
+                    if(global.ghost &gt; GHOST_VALUES.length-2) 
+                    {
+                        global.ghost = GHOST_VALUES.NONE;
+                    }
                     save_settings();
                 } 
                 else if(selection == 3) //Random
@@ -252,7 +260,16 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                     else if(global.rand_method == "Bag") { global.rand_method = "Full"; }
                     save_settings();
                 }
-                else if(selection == 4) //Controls
+                else if(selection == 4) //Level mode
+                {
+                    global.level_mode += 1;
+                    if(global.level_mode &gt;= LEVEL_MODES.length)
+                    {
+                        global.level_mode = 0;
+                    }
+                    save_settings();
+                }
+                else if(selection == 5) //Controls
                 {
                     last_area = area;
                     area = "controls";
@@ -263,7 +280,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                     old_x = x;
                     old_y = y;
                 }
-                else if(selection == 5) //Display 
+                else if(selection == 6) //Display 
                 {
                     area = last_area;
                     area = "display";
@@ -273,7 +290,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                     old_x = x;
                     old_y = y;
                 }  
-                else if(selection == 6) //Sound 
+                else if(selection == 7) //Sound 
                 {
                     area = last_area;
                     area = "sound";
@@ -787,11 +804,12 @@ if(area == "options" or (last_area == "options" and ( abs(x - goal_x) &gt; toler
         draw_set_halign(fa_right);
         if(i == 0) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "Go Back"); }
         else if(i == 1) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.grid, "oo")); }
-        else if(i == 2) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, boolean_replace(global.ghost, "oo")); }
+        else if(i == 2) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, global.GHOST_VALUE_NAMES[global.ghost + 1]); }
         else if(i == 3) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, global.rand_method); }
-        else if(i == 4) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "&gt;"); }
-        else if(i == 5) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
-        else if(i == 6) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
+        else if(i == 4) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, global.LEVEL_MODE_NAMES[global.level_mode]); }
+        else if(i == 5) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "&gt;"); }
+        else if(i == 6) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "^"); }
+        else if(i == 7) { draw_text(2*w-x-w*PADDING/2, h/3+large_height*i-y, "v"); }
         draw_set_halign(fa_left);
     }
 }

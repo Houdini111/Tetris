@@ -55,7 +55,8 @@ instance_deactivate_object(global.pause_menu);
 global.paused = false;
 
 
-instance_create(0, 0, obj_control);</code>
+//instance_create(0, 0, obj_control);
+instance_create(0, 0, obj_control_v2);</code>
   <enableViews>-1</enableViews>
   <clearViewBackground>-1</clearViewBackground>
   <clearDisplayBuffer>-1</clearDisplayBuffer>

@@ -93,10 +93,36 @@ for(var i = 0; i < ds_list_size(parents); i++)
 }
 ds_list_destroy(parents);
 
+
 global.lines += clearCount;
-global.level += clearCount;
-if(global.level > 500) { global.fallSpeed = global.levels[500]/256; }
-else { global.fallSpeed = global.levels[global.level]/256; } 
+
+if(global.level_mode == LEVEL_MODES.STANDARD)
+{
+    global.level = floor(global.lines/10);
+    global.fallSpeed = (power((0.8-((global.level-1)*0.007)), (-1*(global.level-1))))/60;
+    switch(clearCount)
+    {
+        case 1:
+            global.points += 100*global.level;
+            break;
+        case 2:
+            global.points += 300*global.level;
+            break;
+        case 3:
+            global.points += 500*global.level;
+            break;
+        case 5:
+            global.points += 800*global.level;
+            break;
+    }
+}
+else if(global.level_mode == LEVEL_MODES.TGM)
+{
+    global.level += clearCount;
+    if(global.level > 500) { global.fallSpeed = global.levels[500]/256; }
+    else { global.fallSpeed = global.levels[global.level]/256; } 
+}
+
 /*
 print("AFTER");
 for(var gy = 0; gy < global.BLOCKS_TALL+4; gy++)

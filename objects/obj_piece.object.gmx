@@ -336,6 +336,8 @@ if(global.active == id and !global.paused)
         }
         for(i = 0; i &lt; 4; i++) { segments[i].y  += yDiff; }
         
+        global.points += (yDiff*2);
+        
         var snd = audio_play_sound(snd_harddrop, 10, false);
         audio_sound_gain(snd, global.sfx_level/100, 0);
         solidify(id);
@@ -1827,11 +1829,11 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
     }
     
     if(global.in[? gkeys.sd]) { speeding = global.SOFT_DROP_SPEED; }
-    else { speeding = 1; }
+    else { speeding = 0; }
 
-    if(falling) { IG += global.fallSpeed*speeding*delta_time/1000000*60; }
+    if(falling) { IG += (global.fallSpeed+speeding)*delta_time/1000000*60; }
     else { IG = 0; }
-
+    print("FALL SPEED: " + string(global.fallSpeed));
     if(IG &gt; 1)
     {    
         var amt = floor(IG);
@@ -1868,6 +1870,10 @@ if(global.active == id and !global.paused) //Recheck to make sure that it is sti
             for(var i = 0; i &lt; 4; i++) { segments[i].y += amt; }  
         }  
         
+        if( global.in[? gkeys.sd] )
+        {
+            global.points += amt;
+        }
         IG -= amt;
     }
 }

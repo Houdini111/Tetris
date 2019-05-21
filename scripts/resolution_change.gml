@@ -18,13 +18,16 @@ global.VISIBLE_HEIGHT = real(h);
 
 if(argument_count == 2 and argument[1])
 {
-    global.segmentSize = floor(global.VISIBLE_HEIGHT/(global.BLOCKS_TALL));
+    //global.segmentSize = floor(global.VISIBLE_HEIGHT/(global.BLOCKS_TALL));
+    global.segmentSize = floor((global.VISIBLE_HEIGHT*0.9)/(global.BLOCKS_TALL)); //5% padding on top and bottom
 
     var ROOM_HEIGHT = global.VISIBLE_HEIGHT+(4*global.segmentSize);
     var ROOM_WIDTH = global.VISIBLE_WIDTH;
     
-    global.WINDOW_HEIGHT = global.VISIBLE_HEIGHT; //If any top or bottom UI is added, add it's size here
-    global.WINDOW_WIDTH = ROOM_WIDTH+global.GUI_LEFT_SIZE+global.GUI_RIGHT_SIZE;
+    //global.WINDOW_HEIGHT = global.VISIBLE_HEIGHT; //If any top or bottom UI is added, add it's size here
+    //global.WINDOW_WIDTH = ROOM_WIDTH+global.GUI_LEFT_SIZE+global.GUI_RIGHT_SIZE;
+    global.WINDOW_HEIGHT = global.VISIBLE_HEIGHT;
+    global.WINDOW_WIDTH = global.VISIBLE_WIDTH;
     
     for(i = 1; i <= room_last; i++)
     {

@@ -13,6 +13,7 @@ ini_write_string("DISPLAY", "RESOLUTION", global.resolution);
 ini_write_real("AUDIO", "MUSIC_LEVEL", global.music_level);
 ini_write_real("AUDIO", "SFX_LEVEL", global.sfx_level);
 ini_write_real("GAMEPLAY", "CLEAR_SPEED", global.clear_speed);
+ini_write_real("GAMEPLAY", "LEVEL_MODE", global.level_mode);
 
 
 ini_write_real("GAME_CONTROLS", "HOLD", global.in_map[? gkeys.hold]);

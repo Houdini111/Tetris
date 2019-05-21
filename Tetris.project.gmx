@@ -366,6 +366,9 @@
       <script>scripts\print.gml</script>
       <script>scripts\print_map.gml</script>
       <script>scripts\surface_create_log.gml</script>
+      <script>scripts\draw_rectangle_width.gml</script>
+      <script>scripts\draw_text_shadow_transformed.gml</script>
+      <script>scripts\format_time.gml</script>
     </scripts>
     <script>scripts\ini_check_and_delete.gml</script>
   </scripts>
@@ -373,9 +376,12 @@
     <font>fonts\my_font</font>
     <font>fonts\my_large_font</font>
     <font>fonts\my_huge_font</font>
+    <font>fonts\new_font</font>
+    <font>fonts\new_large_font</font>
   </fonts>
   <objects name="objects">
     <object>objects\obj_control</object>
+    <object>objects\obj_control_v2</object>
     <object>objects\obj_piece</object>
     <object>objects\obj_segment</object>
     <object>objects\obj_ghostSeg</object>

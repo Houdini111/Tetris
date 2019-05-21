@@ -125,14 +125,20 @@ if(!parent.moving) { instance_destroy(); }
           <argument>
             <kind>1</kind>
             <string>///DRAW ONTO SURFACE
-if(!global.paused and global.ghost)
+if(!global.paused and global.ghost &gt;= 0)
 {;
     surface_set_target(global.ghostSurf);
     draw_set_color(color);
-    draw_rectangle((x-parent.ghostX)*global.segmentSize+1, (y-parent.ghostY-1)*global.segmentSize, (x-parent.ghostX+1)*global.segmentSize, (y-parent.ghostY)*global.segmentSize-1, false);
+    var outline = false; //Default to FULL]
+    if(global.ghost == 1) 
+    { outline = true; }
+    //draw_rectangle((x-parent.ghostX)*global.segmentSize+1, (y-parent.ghostY-1)*global.segmentSize, (x-parent.ghostX+1)*global.segmentSize, (y-parent.ghostY)*global.segmentSize-1, outline);
+    draw_rectangle_width((x-parent.ghostX)*global.segmentSize+1, (y-parent.ghostY-1)*global.segmentSize, (x-parent.ghostX+1)*global.segmentSize, (y-parent.ghostY)*global.segmentSize-1, outline, global.segmentSize/12, "inner");
     surface_reset_target();
     visible = false;
 }
+
+
 
 
 ///JUST HERE TO PREVENT AUTOMATIC DRAWING
