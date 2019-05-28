@@ -51,7 +51,8 @@ selection = 0;
 
 
 main = ds_list_create();
-ds_list_add(main, my_large_font);
+//ds_list_add(main, my_large_font);
+ds_list_add(main, dos_font_lg);
 ds_list_add(main, "New Game");
 ds_list_add(main, "Options");
 ds_list_add(main, "Exit");
@@ -59,7 +60,11 @@ sections[? "main"] = main;
 
 
 options = ds_list_create();
-ds_list_add(options, my_large_font);
+//var temp = instance_create(-1, -1, c_menu_item);
+//temp.name = "&lt;"; 
+//ds_list_add(options, temp);
+/*
+ds_list_add(options, dos_font_lg);
 ds_list_add(options, "&lt;");
 ds_list_add(options, "Grid");
 ds_list_add(options, "Ghost");
@@ -69,10 +74,22 @@ ds_list_add(options, "Controls");
 ds_list_add(options, "Display");
 ds_list_add(options, "Sound");
 sections[? "options"] = options;
-
+options_state = ds_list_create();
+ds_list_add(options_state, menu_item_state.null);
+ds_list_add(options_state, menu_item_state.null);
+ds_list_add(options_state, menu_item_state.enabled);
+ds_list_add(options_state, menu_item_state.enabled);
+ds_list_add(options_state, menu_item_state.enabled);
+ds_list_add(options_state, menu_item_state.enabled);
+ds_list_add(options_state, menu_item_state.null);
+ds_list_add(options_state, menu_item_state.null);
+ds_list_add(options_state, menu_item_state.null);
+sections[? "options_state"] = options_state;
+*/
 
 controls = ds_list_create();
-ds_list_add(controls, my_large_font);
+//ds_list_add(controls, my_large_font);
+ds_list_add(controls, dos_font_lg);
 ds_list_add(controls, "&lt;");
 ds_list_add(controls, "Simul Multi-dev In");
 ds_list_add(controls, "In Method");
@@ -99,7 +116,8 @@ sections[? "controls"] = controls;
 */
 
 gamecontrols = ds_list_create();
-ds_list_add(gamecontrols, my_large_font);
+//ds_list_add(gamecontrols, my_large_font);
+ds_list_add(gamecontrols, dos_font_lg);
 ds_list_add(gamecontrols, "&lt;");
 ds_list_add(gamecontrols, "Left");
 ds_list_add(gamecontrols, "Right");
@@ -112,7 +130,8 @@ sections[? "gamecontrols"] = gamecontrols;
 
 
 menucontrols = ds_list_create();
-ds_list_add(menucontrols, my_large_font);
+//ds_list_add(menucontrols, my_large_font);
+ds_list_add(menucontrols, dos_font_lg);
 ds_list_add(menucontrols, "&lt;");
 ds_list_add(menucontrols, "UP");
 ds_list_add(menucontrols, "DOWN");
@@ -126,16 +145,19 @@ sections[? "menucontrols"] = menucontrols;
 
 
 display = ds_list_create();
-ds_list_add(display, my_large_font);
+//ds_list_add(display, my_large_font);
+ds_list_add(display, dos_font_lg);
 ds_list_add(display, "Go Back");
 ds_list_add(display, "RES.");
 ds_list_add(display, "MAX FPS");
+ds_list_add(display, "Fullscreen");
 ds_list_add(display, "Debug UI");
 sections[? "display"] = display;
 
 
 sound = ds_list_create();
-ds_list_add(sound, my_large_font);
+//ds_list_add(sound, my_large_font);
+ds_list_add(sound, dos_font_lg);
 ds_list_add(sound, "Go Back");
 ds_list_add(sound, "MUSIC");
 ds_list_add(sound, "SFX");
@@ -477,6 +499,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                         global.resolution = global.resolutions[0];
                     }
                     resolution_change(global.resolution, true);
+                    refresh_size();
                     save_settings();
                 }
                 else if(selection == 2) //Refresh Rate
@@ -493,8 +516,16 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                             MAX_SCROLL_SPEED = view_wport[0]*0.05*room_speed/60;
                         }
                     }
+                    save_settings();
                 }  
-                else if(selection == 3)  //Debug overlay
+                else if(selection == 3)  //Fullscreen
+                {
+                    global.fullscreen = !global.fullscreen;
+                    window_set_fullscreen(global.fullscreen);
+                    refresh_size();
+                    save_settings();
+                }
+                else if(selection == 4)  //Debug overlay
                 {
                     global.debug_overlay = !global.debug_overlay; 
                     show_debug_overlay(global.debug_overlay); 
@@ -746,7 +777,8 @@ draw_set_alpha(1);
 draw_set_color(c_black);
 draw_set_valign(fa_top);
 draw_set_halign(fa_center);
-draw_set_font(my_huge_font);
+//draw_set_font(my_huge_font);
+draw_set_font(dos_font_xl);
 draw_text(w/2, string_height("TETRIS")*0.25, "TETRIS");
 draw_set_font(my_font);
 
@@ -955,7 +987,8 @@ if(area == "display" or (last_area == "display" and ( abs(x - goal_x) &gt; toler
         if(i == 0) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, "Go Back"); }
         else if(i == 1) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, string(global.resolution)); }
         else if(i == 2) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, string(global.refresh_rate)); }
-        else if(i == 3) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.debug_overlay, "oo")); }
+        else if(i == 3) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.fullscreen, "oo")); }
+        else if(i == 4) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.debug_overlay, "oo")); }
         draw_set_halign(fa_left);
     } 
 }

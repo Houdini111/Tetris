@@ -1,6 +1,6 @@
 ///resolution_change(resolutionString[, resize])
-var w = "";
-var h = "";
+var _w = "";
+var _h = "";
 var past = false;
 for(var i = 1; i <= string_length(argument[0]); i++)
 {
@@ -8,13 +8,13 @@ for(var i = 1; i <= string_length(argument[0]); i++)
     if( c == "x") { past = true; } 
     else if( string_digits(c) != "" ) 
     {  
-        if(!past) { w += c; }
-        else { h += c; }
+        if(!past) { _w += c; }
+        else { _h += c; }
     }
 }
 
-global.VISIBLE_WIDTH = real(w);
-global.VISIBLE_HEIGHT = real(h);
+global.VISIBLE_WIDTH = real(_w);
+global.VISIBLE_HEIGHT = real(_h);
 
 if(argument_count == 2 and argument[1])
 {
@@ -54,5 +54,9 @@ if(argument_count == 2 and argument[1])
     {
         w = global.WINDOW_WIDTH;
         h = global.WINDOW_HEIGHT;
+        
+        MAX_SCROLL_SPEED = view_wport[0]*0.05;
+        
+        update_menu_views();
     }
 }

@@ -10,8 +10,7 @@
   <persistent>0</persistent>
   <colour>12632256</colour>
   <showcolour>-1</showcolour>
-  <code>room_speed = global.refresh_rate;
-global.menu = instance_create(0, 0, obj_main_menu);</code>
+  <code>room_speed = global.refresh_rate;</code>
   <enableViews>0</enableViews>
   <clearViewBackground>-1</clearViewBackground>
   <clearDisplayBuffer>-1</clearDisplayBuffer>

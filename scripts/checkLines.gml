@@ -122,18 +122,3 @@ else if(global.level_mode == LEVEL_MODES.TGM)
     if(global.level > 500) { global.fallSpeed = global.levels[500]/256; }
     else { global.fallSpeed = global.levels[global.level]/256; } 
 }
-
-/*
-print("AFTER");
-for(var gy = 0; gy < global.BLOCKS_TALL+4; gy++)
-{
-    line = "";
-    for(var gx = 0; gx < global.BLOCKS_WIDE; gx++)
-    {
-        if(global.segArr[gx, gy] == noone) { line += _b; }
-        else { line += _s; }
-    }
-    print(line);
-}
-print("---------");
-*/

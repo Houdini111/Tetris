@@ -509,6 +509,7 @@ surface_reset_target();
 //draw_surface(room_surf, 50, Y_PADDING);
 //TODO: TEMP VARIABLE FOR CENTERING, RECALCULATE WITH UI AND MOVE OUT OF DRAW
 center_x_offset = (global.WINDOW_WIDTH - (global.segmentSize * global.BLOCKS_WIDE))/2;
+outline_width = 5;
 draw_set_color(c_black);
 draw_set_alpha(0.9);
 draw_rectangle(center_x_offset, Y_PADDING+(global.segmentSize*4), center_x_offset + (global.segmentSize*global.BLOCKS_WIDE), Y_PADDING + (global.segmentSize*(global.BLOCKS_TALL+4)), false);
@@ -525,17 +526,21 @@ half_y = floor(global.WINDOW_HEIGHT/2);
 
 draw_set_color(c_black);
 draw_set_alpha(0.9);
-draw_rectangle(right_x_offset, Y_PADDING+(global.segmentSize*4), right_x_offset + (global.segmentSize*3), Y_PADDING+(global.segmentSize*13), false);
+//draw_rectangle(right_x_offset, Y_PADDING+(global.segmentSize*4), right_x_offset + (global.segmentSize*3), Y_PADDING+(global.segmentSize*13), false);
+draw_rectangle(right_x_offset, Y_PADDING+(global.segmentSize*4), right_x_offset + (global.segmentSize*3), Y_PADDING+(global.segmentSize*8), false);
 draw_rectangle(right_x_offset, Y_PADDING+(global.segmentSize*14), right_x_offset + (global.segmentSize*3), Y_PADDING+(global.segmentSize*18), false);
 draw_rectangle(right_x_offset, Y_PADDING+(global.segmentSize*18.5), right_x_offset + (global.segmentSize*3), Y_PADDING+(global.segmentSize*24), false);
 draw_set_alpha(1);
 
 draw_set_color(c_white);
-draw_set_font(new_font);
-draw_rectangle_width(right_x_offset, Y_PADDING+(global.segmentSize*4), right_x_offset + (global.segmentSize*3), Y_PADDING+(global.segmentSize*13), true, 5, "outer");
+//draw_set_font(new_font);
+draw_set_font(dos_font_md);
+//draw_rectangle_width(right_x_offset, Y_PADDING+(global.segmentSize*4), right_x_offset + (global.segmentSize*3), Y_PADDING+(global.segmentSize*13), true, outline_width, "outer");
+draw_rectangle_width_sides(right_x_offset, Y_PADDING+(global.segmentSize*4), right_x_offset + (global.segmentSize*3), Y_PADDING+(global.segmentSize*8), outline_width, "outer", array(true, true, false, true));
+draw_line_width(right_x_offset - outline_width/2, Y_PADDING+(global.segmentSize*8), right_x_offset + (global.segmentSize*0.5), Y_PADDING+(global.segmentSize*8), outline_width);
 var _txt_scale = global.VISIBLE_HEIGHT/1080;
-draw_text_transformed(right_x_offset+5,  Y_PADDING+(global.segmentSize*14)+5, "HOLD", _txt_scale, _txt_scale, 0);
-draw_rectangle_width(right_x_offset, Y_PADDING+(global.segmentSize*14), right_x_offset + (global.segmentSize*3), Y_PADDING+(global.segmentSize*18), true, 5, "outer");
+draw_text_transformed(right_x_offset+5,  Y_PADDING+(global.segmentSize*14.5), "HOLD", _txt_scale, _txt_scale, 0);
+draw_rectangle_width(right_x_offset, Y_PADDING+(global.segmentSize*14), right_x_offset + (global.segmentSize*3), Y_PADDING+(global.segmentSize*18), true, outline_width, "outer");
 
 
 if(!global.paused)
@@ -580,13 +585,14 @@ if(!global.paused)
     }
 }
 
-draw_set_font(new_large_font);
-draw_text_transformed(right_x_offset+(global.segmentSize*0.2),  Y_PADDING+(global.segmentSize*18.5), "SCORE", _txt_scale, _txt_scale, 0);
-draw_text_transformed(right_x_offset+(global.segmentSize*0.2),  Y_PADDING+(global.segmentSize*19.5), string(global.points), _txt_scale, _txt_scale, 0);
-draw_text_transformed(right_x_offset+(global.segmentSize*0.2),  Y_PADDING+(global.segmentSize*20.5), "LEVEL", _txt_scale, _txt_scale, 0);
-draw_text_transformed(right_x_offset+(global.segmentSize*0.2),  Y_PADDING+(global.segmentSize*21.5), string(global.level), _txt_scale, _txt_scale, 0);
-draw_text_transformed(right_x_offset+(global.segmentSize*0.2),  Y_PADDING+(global.segmentSize*22.5), "TIME", _txt_scale, _txt_scale, 0);
-draw_text_transformed(right_x_offset+(global.segmentSize*0.2),  Y_PADDING+(global.segmentSize*23.5), format_time(global.time), _txt_scale, _txt_scale, 0);
+//draw_set_font(new_large_font);
+draw_set_font(dos_font_lg);
+draw_text_transformed(right_x_offset+(global.segmentSize*0.175),  Y_PADDING+(global.segmentSize*19.25), "SCORE", _txt_scale, _txt_scale, 0);
+draw_text_transformed(right_x_offset+(global.segmentSize*0.175),  Y_PADDING+(global.segmentSize*20.00), string(global.points), _txt_scale, _txt_scale, 0);
+draw_text_transformed(right_x_offset+(global.segmentSize*0.175),  Y_PADDING+(global.segmentSize*21.00), "LEVEL", _txt_scale, _txt_scale, 0);
+draw_text_transformed(right_x_offset+(global.segmentSize*0.175),  Y_PADDING+(global.segmentSize*21.75), string(global.level), _txt_scale, _txt_scale, 0);
+draw_text_transformed(right_x_offset+(global.segmentSize*0.175),  Y_PADDING+(global.segmentSize*22.75), "TIME", _txt_scale, _txt_scale, 0);
+draw_text_transformed(right_x_offset+(global.segmentSize*0.175),  Y_PADDING+(global.segmentSize*23.50), format_time(global.time), _txt_scale, _txt_scale, 0);
 </string>
           </argument>
         </arguments>

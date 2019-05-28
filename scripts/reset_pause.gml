@@ -1,12 +1,5 @@
 ///reset_pause()
-
-with(global.pause_menu)
+with(global.menu)
 {
-    selection = 0;
-    area = "main";
-    last_area = area;
-    x = 0;
-    y = 0;
-    goal_x = x;
-    goal_y = y;
+    move_to_menu_area("main");
 }

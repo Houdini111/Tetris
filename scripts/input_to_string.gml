@@ -1,8 +1,11 @@
 ///input_to_string(input, mode)
 if( argument1 == in_modes.kb )
 {
+    //ASCII values
     if( argument0 >= $41 and argument0 <= $5a ) { return string( chr(argument0) ); }
+    //ASCII numbers
     else if( argument0 >= 48 and argument0 <= 57 ) { return string( argument0 - 48 ); }
+    //Special characters
     else 
     { 
         switch(argument0)

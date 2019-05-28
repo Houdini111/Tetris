@@ -29,34 +29,18 @@ global.red = make_color_rgb(254, 0, 0);     //z aka: stairs up and right
 global.green = make_color_rgb(0, 255, 1);   //s aka: stairs up and left
 global.magenta = make_color_rgb(255, 0, 255);  //t
 
-/*
-instance_create(0, 0, obj_TEST);
-instance_create(50, 50, obj_TEST);
-instance_create(100, 100, obj_TEST);
-instance_create(150, 150, obj_TEST);
-instance_create(room_width-global.segmentSize, room_height-global.segmentSize, obj_TEST);
-show_debug_message(string(view_xport[0]) + ", " + string(view_yport[0]));
-*/
-
 
 global.STATIC_SEGMENT_SURFACE = surface_create_log(room_width, room_height);
 
-/*
-global.test1 = make_color_rgb(0, 0, 0);
-global.test2 = make_color_rgb(100, 100, 100);
-global.test3 = make_color_rgb(200, 200, 200);
-*/
 
-draw_set_font(my_font);
+draw_set_font(dos_font_md);
 
 
-global.pause_menu = instance_create(0, 0, obj_pause_menu);
-instance_deactivate_object(global.pause_menu);
+instance_deactivate_object(global.menu);
 global.paused = false;
 
 
-//instance_create(0, 0, obj_control);
-instance_create(0, 0, obj_control_v2);</code>
+instance_create(0, 0, obj_control);</code>
   <enableViews>-1</enableViews>
   <clearViewBackground>-1</clearViewBackground>
   <clearDisplayBuffer>-1</clearDisplayBuffer>

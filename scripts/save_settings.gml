@@ -10,6 +10,7 @@ ini_write_real("DEBUG", "DEBUG_OVERLAY", global.debug_overlay);
 ini_write_real("DEBUG", "DEBUG_COLORS", global.debug_colors);
 ini_write_real("DISPLAY", "REFRESH_RATE", global.refresh_rate);
 ini_write_string("DISPLAY", "RESOLUTION", global.resolution);
+ini_write_real("DISPLAY", "FULLSCREEN", global.fullscreen);
 ini_write_real("AUDIO", "MUSIC_LEVEL", global.music_level);
 ini_write_real("AUDIO", "SFX_LEVEL", global.sfx_level);
 ini_write_real("GAMEPLAY", "CLEAR_SPEED", global.clear_speed);

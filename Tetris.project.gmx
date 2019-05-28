@@ -105,12 +105,12 @@
     <sprite>sprites\spr_segment</sprite>
     <sprite>sprites\spr_ghost</sprite>
     <sprites name="minis">
-      <sprite>sprites\spr_long</sprite>
+      <sprite>sprites\spr_i</sprite>
       <sprite>sprites\spr_s</sprite>
-      <sprite>sprites\spr_square</sprite>
+      <sprite>sprites\spr_o</sprite>
       <sprite>sprites\spr_z</sprite>
       <sprite>sprites\spr_l</sprite>
-      <sprite>sprites\spr_rl</sprite>
+      <sprite>sprites\spr_j</sprite>
       <sprite>sprites\spr_t</sprite>
     </sprites>
     <sprite>sprites\spr_x</sprite>
@@ -119,18 +119,70 @@
   <backgrounds name="background"/>
   <paths name="paths"/>
   <scripts name="scripts">
+    <script>scripts\all_segments_valid_with_offset.gml</script>
+    <script>scripts\all_segments_valid.gml</script>
     <script>scripts\checkLines.gml</script>
-    <script>scripts\solidify.gml</script>
-    <script>scripts\reset_pause.gml</script>
-    <script>scripts\prepareGhostSurface.gml</script>
-    <script>scripts\updateGhost.gml</script>
-    <script>scripts\refresh_bag.gml</script>
-    <script>scripts\save_settings.gml</script>
-    <script>scripts\boolean_replace.gml</script>
     <script>scripts\generate_controls_surface.gml</script>
-    <script>scripts\draw_text_color_outline.gml</script>
+    <script>scripts\move_to_menu_area.gml</script>
     <script>scripts\moveLinesDown.gml</script>
-    <script>scripts\gp_check.gml</script>
+    <script>scripts\prepareGhostSurface.gml</script>
+    <script>scripts\refresh_bag.gml</script>
+    <script>scripts\reset_pause.gml</script>
+    <script>scripts\save_settings.gml</script>
+    <script>scripts\solidify.gml</script>
+    <script>scripts\transition_to_room.gml</script>
+    <script>scripts\update_segments.gml</script>
+    <script>scripts\updateGhost.gml</script>
+    <script>scripts\valid_segment_location.gml</script>
+    <scripts name="menu_item">
+      <script>scripts\add_new_menu_item.gml</script>
+      <script>scripts\set_menu_item_state.gml</script>
+      <script>scripts\find_menu_item_by_name.gml</script>
+      <script>scripts\get_active_menu_item.gml</script>
+      <script>scripts\get_visible_menu_item.gml</script>
+      <script>scripts\set_menu_item_value.gml</script>
+      <script>scripts\update_list_items_values.gml</script>
+      <script>scripts\find_index_by_name.gml</script>
+      <script>scripts\find_visible_index_by_name.gml</script>
+    </scripts>
+    <scripts name="Rotation Rules">
+      <scripts name="SRS">
+        <script>scripts\srs_i.gml</script>
+        <script>scripts\srs_j.gml</script>
+        <script>scripts\srs_l.gml</script>
+        <script>scripts\srs_s.gml</script>
+        <script>scripts\srs_z.gml</script>
+        <script>scripts\srs_t.gml</script>
+        <script>scripts\srs_o.gml</script>
+      </scripts>
+      <script>scripts\update_segment_offsets.gml</script>
+    </scripts>
+    <scripts name="Kick Rules">
+      <scripts name="SRS">
+        <script>scripts\srs_i_kick.gml</script>
+        <script>scripts\srs_jlstz_kick.gml</script>
+      </scripts>
+    </scripts>
+    <scripts name="Utilities">
+      <script>scripts\shift_list_left.gml</script>
+      <script>scripts\resolution_change.gml</script>
+      <script>scripts\input_to_string.gml</script>
+      <script>scripts\device_to_string.gml</script>
+      <script>scripts\array.gml</script>
+      <script>scripts\print.gml</script>
+      <script>scripts\print_map.gml</script>
+      <script>scripts\surface_create_log.gml</script>
+      <script>scripts\draw_rectangle_width.gml</script>
+      <script>scripts\draw_rectangle_width_sides.gml</script>
+      <script>scripts\draw_text_shadow_transformed.gml</script>
+      <script>scripts\ini_check_and_delete.gml</script>
+      <script>scripts\format_time.gml</script>
+      <script>scripts\ds_lists_destroy.gml</script>
+      <script>scripts\refresh_size.gml</script>
+      <script>scripts\boolean_replace.gml</script>
+      <script>scripts\gp_check.gml</script>
+      <script>scripts\draw_text_color_outline.gml</script>
+    </scripts>
     <scripts name="TweenGMS">
       <scripts name="Tweening">
         <scripts name="Tween Fire">
@@ -357,22 +409,15 @@
         <script>scripts\SharedTweener.gml</script>
       </scripts>
     </scripts>
-    <scripts name="Utilities">
-      <script>scripts\shift_list_left.gml</script>
-      <script>scripts\resolution_change.gml</script>
-      <script>scripts\input_to_string.gml</script>
-      <script>scripts\device_to_string.gml</script>
-      <script>scripts\array.gml</script>
-      <script>scripts\print.gml</script>
-      <script>scripts\print_map.gml</script>
-      <script>scripts\surface_create_log.gml</script>
-      <script>scripts\draw_rectangle_width.gml</script>
-      <script>scripts\draw_text_shadow_transformed.gml</script>
-      <script>scripts\format_time.gml</script>
-    </scripts>
-    <script>scripts\ini_check_and_delete.gml</script>
+    <script>scripts\try_move_to_offset.gml</script>
+    <script>scripts\update_menu_views.gml</script>
   </scripts>
   <fonts name="fonts">
+    <font>fonts\dos_font_xs</font>
+    <font>fonts\dos_font_sm</font>
+    <font>fonts\dos_font_md</font>
+    <font>fonts\dos_font_lg</font>
+    <font>fonts\dos_font_xl</font>
     <font>fonts\my_font</font>
     <font>fonts\my_large_font</font>
     <font>fonts\my_huge_font</font>
@@ -381,17 +426,13 @@
   </fonts>
   <objects name="objects">
     <object>objects\obj_control</object>
-    <object>objects\obj_control_v2</object>
     <object>objects\obj_piece</object>
     <object>objects\obj_segment</object>
     <object>objects\obj_ghostSeg</object>
     <object>objects\obj_phantomSeg</object>
     <object>objects\obj_input_handler</object>
-    <objects name="menus">
-      <object>objects\obj_menu</object>
-      <object>objects\obj_pause_menu</object>
-      <object>objects\obj_main_menu</object>
-    </objects>
+    <object>objects\c_menu_item</object>
+    <object>objects\obj_menu</object>
     <objects name="TweenGMS">
       <object>objects\obj_SharedTweener</object>
     </objects>
@@ -399,7 +440,7 @@
   <rooms name="rooms">
     <room>rooms\_init_</room>
     <room>rooms\rm_main_menu</room>
-    <room>rooms\game_board</room>
+    <room>rooms\rm_game_board</room>
   </rooms>
   <help>
     <rtf>help.rtf</rtf>

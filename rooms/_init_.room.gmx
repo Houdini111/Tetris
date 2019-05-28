@@ -32,6 +32,7 @@ defaults[? "DEBUG_OVERLAY"] = false;
 defaults[? "DEBUG_COLORS"] = false;
 defaults[? "REFRESH_RATE"] = global.refresh_rates[0];
 defaults[? "RESOLUTION"] = global.resolutions[0];
+defaults[? "FULLSCREEN"] = false;
 defaults[? "MUSIC_LEVEL"] = 100;
 defaults[? "SFX_LEVEL"] = 100;
 defaults[? "CLEAR_SPEED"] = 0.1; //Tenths of a second
@@ -51,14 +52,19 @@ global.debug_overlay = ini_read_real("DEBUG", "DEBUG_OVERLAY", defaults[? "DEBUG
 global.debug_colors = ini_read_real("DEBUG", "DEBUG_COLORS", defaults[? "DEBUG_OVERLAY"]);
 global.refresh_rate = ini_read_real("DISPLAY", "REFRESH_RATE", defaults[? "REFRESH_RATE"]);
 global.resolution = ini_read_string("DISPLAY", "RESOLUTION", defaults[? "RESOLUTION"]);
+global.fullscreen = ini_read_real("DISPLAY", "FULLSCREEN", defaults[? "FULLSCREEN"]);
 global.music_level = ini_read_real("AUDIO", "MUSIC_LEVEL", defaults[? "MUSIC_LEVEL"]);
 global.sfx_level = ini_read_real("AUDIO", "SFX_LEVEL", defaults[? "SFX_LEVEL"]);
 global.clear_speed = ini_read_real("GAMEPLAY", "CLEAR_SPEED", defaults[? "CLEAR_SPEED"]);
 global.level_mode = ini_read_real("GAMEPLAY", "LEVEL_MODE", defaults[? "LEVEL_MODE"]);
+global.rotation_rule = "SRS";
+global.kick_rule = "SRS";
 ini_close();
 
-//Make save/loading for this
+//TODO: Make save/loading for this
 global.bg = "random_starfield";
+
+enum menu_item_state { null, enabled, disabled, invisible };
 
 global.input_handler = instance_create(0, 0, obj_input_handler);
 save_settings(true, true);
@@ -70,9 +76,41 @@ show_debug_overlay(global.debug_overlay);
 global.GUI_LEFT_SIZE = 100; 
 global.GUI_RIGHT_SIZE = 70;
 
-resolution_change(global.resolution, true);
+window_set_fullscreen(global.fullscreen);
+resolution_change(global.resolution);
 
-room_goto(rm_main_menu);</code>
+
+global.PADDING = 0.25;
+global.BOX_PADDING = 0.125;
+
+draw_set_font(dos_font_xs);
+global.xs_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+global.PADDING); 
+global.box_xs_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+global.BOX_PADDING); 
+
+draw_set_font(dos_font_sm);
+global.sm_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+global.PADDING); 
+global.box_sm_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+global.BOX_PADDING); 
+
+draw_set_font(dos_font_md);
+global.md_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+global.PADDING); 
+global.box_md_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+global.BOX_PADDING); 
+
+draw_set_font(dos_font_lg);
+global.lg_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+global.PADDING); 
+global.box_lg_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+global.BOX_PADDING); 
+
+draw_set_font(dos_font_xl);
+global.xl_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+global.PADDING); 
+global.box_xl_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+global.BOX_PADDING); 
+
+
+
+global.menu = instance_create(0, 0, obj_menu);
+with(global.menu) 
+{
+    refresh_size();
+    transition_to_room(rm_main_menu);
+}</code>
   <enableViews>0</enableViews>
   <clearViewBackground>-1</clearViewBackground>
   <clearDisplayBuffer>-1</clearDisplayBuffer>

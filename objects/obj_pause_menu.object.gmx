@@ -69,7 +69,6 @@ ds_list_add(options, "Display");
 ds_list_add(options, "Sound");
 sections[? "options"] = options;
 
-
 controls = ds_list_create();
 ds_list_add(controls, my_large_font);
 ds_list_add(controls, "&lt;");
@@ -129,6 +128,7 @@ ds_list_add(display, my_large_font);
 ds_list_add(display, "Go Back");
 ds_list_add(display, "RES.");
 ds_list_add(display, "MAX FPS");
+ds_list_add(display, "Fullscreen");
 ds_list_add(display, "Debug UI");
 sections[? "display"] = display;
 
@@ -185,7 +185,7 @@ ds_list_destroy(sound);
         <exetype>2</exetype>
         <functionname></functionname>
         <codestring></codestring>
-        <whoName>self</whoName>
+        <whoName>obj_pause_menu</whoName>
         <relative>0</relative>
         <isnot>0</isnot>
         <arguments>
@@ -471,6 +471,7 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                         global.resolution = global.resolutions[0];
                     }
                     resolution_change(global.resolution, true);
+                    refresh_size();
                     save_settings();
                 }
                 else if(selection == 2) //Refresh Rate
@@ -487,8 +488,16 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                             MAX_SCROLL_SPEED = view_wport[0]*0.05*room_speed/60;
                         }
                     }
+                    save_settings();
                 }  
-                else if(selection == 3)  //Debug overlay
+                else if(selection == 3) //Fullscreen
+                {
+                    global.fullscreen = !global.fullscreen;
+                    window_set_fullscreen(global.fullscreen);
+                    refresh_size();
+                    save_settings();
+                }
+                else if(selection == 4)  //Debug overlay
                 {
                     global.debug_overlay = !global.debug_overlay; 
                     show_debug_overlay(global.debug_overlay); 
@@ -701,7 +710,6 @@ if( abs(x - goal_x) &lt; tolerance and abs(y - goal_y) &lt; tolerance )
                         }
                     }
                 }  
-                
             }
         }
     } 
@@ -948,7 +956,8 @@ if(area == "display" or (last_area == "display" and ( abs(x - goal_x) &gt; toler
         if(i == 0) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, "Go Back"); }
         else if(i == 1) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, string(global.resolution)); }
         else if(i == 2) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, string(global.refresh_rate)); }
-        else if(i == 3) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.debug_overlay, "oo")); }
+        else if(i == 3) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.fullscreen, "oo")); }
+        else if(i == 4) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.debug_overlay, "oo")); }
         draw_set_halign(fa_left);
     } 
 }

@@ -4,7 +4,7 @@
   <solid>0</solid>
   <visible>-1</visible>
   <depth>0</depth>
-  <persistent>0</persistent>
+  <persistent>-1</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -25,15 +25,7 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>w = global.WINDOW_WIDTH;
-h = global.WINDOW_HEIGHT;
-
-PADDING = 0.25;
-BOX_PADDING = 0.125;
-
-MAX_SCROLL_SPEED = view_wport[0]*0.05;
-
-x = 0;
+            <string>x = 0;
 y = 0;
 
 tolerance = 0.1;
@@ -47,23 +39,109 @@ transition_tween = TweenCreate(id);
 editmode = false;
 editready = false;
 
-draw_set_font(my_font);
-normal_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+PADDING); 
-box_normal_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+BOX_PADDING); 
-
-draw_set_font(my_large_font);
-large_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+PADDING); 
-box_large_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+BOX_PADDING); 
-
-draw_set_font(my_huge_font);
-huge_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+PADDING); 
-box_huge_height = string_height("ABCDEFGHIJKLEMNOPQRSTUVWXYZ") * (1+BOX_PADDING); 
-
-
-draw_set_font(my_font);
-
+//draw_set_font(my_font);
 
 sections = ds_map_create();
+
+
+views = ds_map_create();
+refresh_size();
+update_menu_views();
+
+area = "main";
+last_area = area;
+
+selection = 0;
+
+main = ds_list_create();
+add_new_menu_item(main, "New Game");
+add_new_menu_item(main, "Resume");
+add_new_menu_item(main, "Options");
+add_new_menu_item(main, "Main Menu");
+add_new_menu_item(main, "Exit Game");
+sections[? "main"] = main;
+
+options = ds_list_create();
+add_new_menu_item(options, "&lt;", "Go Back");
+add_new_menu_item(options, "Grid");
+add_new_menu_item(options, "Ghost");
+add_new_menu_item(options, "Random");
+add_new_menu_item(options, "Level Mode");
+add_new_menu_item(options, "Controls", "&gt;");
+add_new_menu_item(options, "Display", "^");
+add_new_menu_item(options, "Sound", "v");
+sections[? "options"] = options;
+
+controls = ds_list_create();
+add_new_menu_item(controls, "&lt;", "Go Back");
+add_new_menu_item(controls, "Simul Multi-dev In");
+add_new_menu_item(controls, "Input Device");
+add_new_menu_item(controls, "Reset to Default");
+add_new_menu_item(controls, "Game Controls", "^");
+add_new_menu_item(controls, "Menu Controls", "v");
+sections[? "controls"] = controls;
+CONTROL_PAGE_NUMBER = 5;
+
+gamecontrols = ds_list_create();
+add_new_menu_item(gamecontrols, "&lt;", "Go Back");
+add_new_menu_item(gamecontrols, "Left");
+add_new_menu_item(gamecontrols, "Right");
+add_new_menu_item(gamecontrols, "CW");
+add_new_menu_item(gamecontrols, "CCW");
+add_new_menu_item(gamecontrols, "Hard");
+add_new_menu_item(gamecontrols, "Soft");
+add_new_menu_item(gamecontrols, "Hold");
+sections[? "gamecontrols"] = gamecontrols;
+
+menucontrols = ds_list_create();
+add_new_menu_item(menucontrols, "&lt;", "Go Back");
+add_new_menu_item(menucontrols, "Up");
+add_new_menu_item(menucontrols, "Down");
+add_new_menu_item(menucontrols, "Left");
+add_new_menu_item(menucontrols, "Right");
+add_new_menu_item(menucontrols, "Accept");
+add_new_menu_item(menucontrols, "Back");
+add_new_menu_item(menucontrols, "Menu");
+sections[? "menucontrols"] = menucontrols;
+
+display = ds_list_create();
+add_new_menu_item(display, "&lt;", "Go Back");
+add_new_menu_item(display, "Resolution");
+add_new_menu_item(display, "Max FPS");
+add_new_menu_item(display, "Fullscreen");
+add_new_menu_item(display, "Debug UI");
+sections[? "display"] = display;
+
+sound = ds_list_create();
+add_new_menu_item(sound, "&lt;", "Go Back");
+add_new_menu_item(sound, "MUSIC");
+add_new_menu_item(sound, "SFX");
+sections[? "sound"] = sound;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="1" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>///Delete data structures
+ds_map_destroy(views);
+ds_lists_destroy(sections, main, options, controls, gamecontrols, menucontrols, display, sound);
 </string>
           </argument>
         </arguments>
@@ -86,7 +164,9 @@ sections = ds_map_create();
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )
+            <string>///TODO: LOGIC
+
+if( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )
 {
     if(!TweenExists(transition_tween) or !TweenIsPlaying(transition_tween))
     {
@@ -125,6 +205,666 @@ else
     x = goal_x;
     y = goal_y;
 }
+
+
+if( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance ) 
+{ exit; } //Don't do any processing logic if it's not yet at a proper position
+
+if(!editmode) //For non-editmode things (which would include things like controls)
+{
+    if(global.in_p[? mkeys.up]) { selection--; } 
+    else if(global.in_p[? mkeys.down]) { selection++; }
+    
+    var activeList = sections[? area];
+    var i = 0;
+    var inaccessibleCount = 0;
+    var mi = noone;
+    for(; i &lt; ds_list_size(activeList); i++)
+    {
+        mi = activeList[| i];   
+        if(mi.state == menu_item_state.invisible or mi.state == menu_item_state.disabled)
+        {
+            inaccessibleCount++;
+        }
+    }
+   
+    //-1 because it's zero indexed, 
+    //plus remove the ability to select an additional option for each one that is inaccessible
+    selection = clamp(selection, 0, ds_list_size(activeList)-1-inaccessibleCount); 
+    
+    if(global.in_p[? mkeys.accept])
+    {
+        mi = get_active_menu_item(activeList, selection);
+        if(mi != noone)
+        {
+            if(area == "main")
+            {
+                if(mi.name == "New Game")
+                { 
+                    transition_to_room(rm_game_board);
+                } 
+                else if(mi.name == "Resume")
+                { 
+                    //Simluate pressing the menu button to close the menu
+                    keyboard_key_press(global.in_map[? mkeys.menu]); 
+                    keyboard_key_release(global.in_map[? mkeys.menu]); 
+                } 
+                else if(mi.name == "Options")
+                { 
+                    move_to_menu_area("options");
+                }
+                else if(mi.name == "Main Menu")
+                {
+                    transition_to_room(rm_main_menu);
+                }
+                else if(mi.name == "Exit Game") { game_end(); }
+            }
+            else if(area == "options")
+            {
+                if(mi.name == "&lt;")
+                {
+                    move_to_menu_area("main");
+                }
+                else if(mi.name == "Grid")
+                { 
+                    global.grid = !global.grid; 
+                    save_settings();
+                    update_list_items_values(area);
+                } 
+                else if(mi.name == "Ghost")
+                { 
+                    global.ghost += 1;
+                    //-1 for being zero indexed
+                    //If length actually said the real length, 
+                    //then it'd be -1 again for having NONE be -1 
+                    //(so technically it's -1 indexed).
+                    //However, it just continues counting, so in reality 
+                    //it's one lower than it should be because of the
+                    //-1 indexing of the values
+                    if(global.ghost &gt; GHOST_VALUES.length-1) 
+                    {
+                        global.ghost = GHOST_VALUES.NONE;
+                    }
+                    save_settings();
+                    update_list_items_values(area);
+                } 
+                else if(mi.name == "Random")
+                {
+                    if(global.rand_method == "Full") { global.rand_method = "Bag"; }
+                    else if(global.rand_method == "Bag") { global.rand_method = "Full"; }
+                    save_settings();
+                    update_list_items_values(area);
+                }
+                else if(mi.name == "Level Mode")
+                {
+                    global.level_mode += 1;
+                    if(global.level_mode &gt;= LEVEL_MODES.length)
+                    {
+                        global.level_mode = 0;
+                    }
+                    save_settings();
+                    update_list_items_values(area);
+                }
+                else if(mi.name == "Controls")
+                {
+                    move_to_menu_area("controls");
+                }
+                else if(mi.name == "Display")
+                {
+                    move_to_menu_area("display");
+                }  
+                else if(mi.name == "Sound")
+                {
+                    move_to_menu_area("sound");
+                }  
+            }
+            else if(area == "controls")
+            {
+                if(mi.name == "&lt;")
+                {
+                    move_to_menu_area("options");
+                }
+                else if(mi.name == "Simul Multi-dev In")
+                {
+                    if(global.multi_input and ds_exists(global.in_method, ds_type_map)) { ds_map_destroy(global.in_method); }
+                    else if (!global.multi_input) { global.in_method = ds_map_create(); }    
+                
+                    global.multi_input = !global.multi_input;
+                    
+                    with(global.input_handler) { event_user(0); }
+                    
+                    save_settings();
+                    update_list_items_values(area);
+                }
+                else if(mi.name == "Input Device")
+                {
+                    if(!global.multi_input)
+                    {
+                        var in = global.in_method;
+                        
+                        if(floor(in) == in_modes.gp) 
+                        {
+                            var slot = floor(in*100 - floor(in*100));
+                            var p = ds_list_find_value(global.pads, slot);
+                            if( !is_undefined(p) )
+                            {
+                                if(p == ds_list_size(global.pads)) { in = 0; }
+                                else { in = in_modes.gp + (global.pads[| p+1] / 100); }
+                            }
+                            else { in = 0; }
+                        }
+                        //TODO: ?????
+                        else if(in == in_modes.kb or in == in_modes.mouse) { in = in_modes.gp + global.pads[| 0]/100; }
+                        else { in++; }
+                        
+                        for(var i = 0; i &lt; mkeys.length; i++)
+                        {
+                            if(i == gkeys.length) { i++; }
+                            
+                            //TODO: CHANGE INPUTS TO DEFAULT
+                        }
+                        
+                        save_settings();
+                        update_list_items_values(area);
+                    }
+                }
+                else if(mi.name == "Reset to Default")
+                {
+                    with(global.input_handler) { event_user(0); }
+                    
+                    save_settings();
+                    update_list_items_values(area);
+                }
+                else if(mi.name == "Game Controls")
+                {
+                    move_to_menu_area("gamecontrols");
+                }
+                else if(mi.name == "Menu Controls")
+                {
+                    move_to_menu_area("menucontrols");
+                }
+            }
+            else if(area == "gamecontrols")
+            {
+                if(mi.name == "&lt;") 
+                {
+                    move_to_menu_area("controls");
+                }
+                else
+                {
+                    editmode = true;
+                    editready = false;
+                    io_clear();
+                }
+            }
+            else if(area == "menucontrols")
+            {
+                if(mi.name == "&lt;") 
+                {
+                    move_to_menu_area("controls");
+                }
+                else
+                {
+                    editmode = true;
+                    editready = false;
+                    io_clear();
+                }
+            }
+            else if(area == "display")
+            {
+                if(mi.name == "&lt;")
+                {
+                    move_to_menu_area("options");
+                }
+                else if(mi.name == "Resolution")
+                {
+                    for(var index = 0; index &lt; array_length_1d(global.resolutions); index++)
+                    {
+                        if(global.resolutions[index] == global.resolution)
+                        {
+                            index++;
+                            if(index == array_length_1d(global.resolutions)) 
+                            { 
+                                global.resolution = global.resolutions[0]; 
+                                index = -1;
+                                break;
+                            }
+                            else 
+                            { 
+                                global.resolution = global.resolutions[index]; 
+                                index = -1;
+                                break;
+                            }
+                        }
+                    }
+                    if(index == array_length_1d(global.resolutions)) //CUSTOM RESOLUTION
+                    {
+                        global.resolution = global.resolutions[0];
+                    }
+                    resolution_change(global.resolution, true);
+                    refresh_size();
+                    save_settings();
+                    update_list_items_values(area);
+                    x = views[? "display_x"];
+                    y = views[? "display_y"];
+                    goal_x = x;
+                    goal_y = y;
+                }
+                else if(mi.name == "Max FPS")
+                {
+                    for(var index = 0; index &lt; array_length_1d(global.refresh_rates); index++)
+                    {
+                        if(global.refresh_rates[index] == global.refresh_rate)
+                        {
+                            index++;
+                            if(index == array_length_1d(global.refresh_rates)) 
+                                { global.refresh_rate = global.refresh_rates[0]; }
+                            else { global.refresh_rate = global.refresh_rates[index]; }
+                            room_speed = global.refresh_rate;
+                            MAX_SCROLL_SPEED = view_wport[0]*0.05*room_speed/60;
+                        }
+                    }
+                    save_settings();
+                    update_list_items_values(area);
+                }
+                if(mi.name == "Fullscreen")
+                {
+                    global.fullscreen = !global.fullscreen;
+                    window_set_fullscreen(global.fullscreen);
+                    if(!global.fullscreen) 
+                    {
+                        resolution_change(global.resolution, true);
+                    }
+                    refresh_size();
+                    save_settings();
+                    update_list_items_values(area);
+                    x = views[? "display_x"];
+                    y = views[? "display_y"];
+                    goal_x = x;
+                    goal_y = y;
+                    if(global.fullscreen) 
+                    {
+                        set_menu_item_state(display, "Resolution", menu_item_state.disabled);
+                    }
+                    else
+                    {
+                        set_menu_item_state(display, "Resolution", menu_item_state.enabled);
+                    }
+                }
+                else if(mi.name == "Debug UI")
+                {
+                    global.debug_overlay = !global.debug_overlay; 
+                    show_debug_overlay(global.debug_overlay); 
+                    save_settings();
+                    update_list_items_values(area);
+                }
+            }
+            else if(area == "sound")
+            {
+                if(mi.name == "&lt;")
+                {
+                    move_to_menu_area("options");
+                }
+                else if(mi.name == "MUSIC")
+                {
+                    global.music_level += 5;
+                    if(global.music_level &gt; 100) { global.music_level -= 100; }
+                    save_settings();
+                    update_list_items_values(area);
+                    //If obj_control exists, then there is music.
+                    //If there is music, we need to adjust its volume.
+                    //Thus, having obj_control execute the volume change
+                    //will mean that it will only ever try to change the 
+                    //music volume if there is music. 
+                    with(obj_control) 
+                    {
+                        audio_sound_gain(global.music, global.music_level/100, 0);
+                    }
+                }
+                else if(mi.name == "SFX")
+                {
+                    global.sfx_level += 5;
+                    if(global.sfx_level &gt; 100) { global.sfx_level -= 100; }
+                    save_settings();
+                    update_list_items_values(area);
+                }  
+            }
+        }
+    }
+}
+else //Edit Mode
+{
+    if(!editready) { editready = true; } //A 1 frame delay
+    else
+    {
+        var to_set = 0;
+        if(area == "gamecontrols") { to_set = selection - 1; }
+        else if(area == "menucontrols") { to_set = selection + gkeys.length; }
+        
+        if((area == "gamecontrols" or area == "menucontrols") and selection != 0)
+        {
+            //A keyboard key was pressed and the mode is either keyboard exclusive or keyboard inclusive
+            if(keyboard_key != 0 and (global.multi_input or global.in_method == in_modes.kb))
+            {
+                global.in_map[? to_set] = keyboard_key;
+                global.in_method[? to_set] = in_modes.kb;
+                editmode = false;
+                save_settings();
+            }
+            //A mouse button was pressed and the mode is either mouse exclusive or mouse inclusive
+            else if(mouse_button != 0 and (global.multi_input or global.in_method == in_modes.mouse))
+            {
+                global.in_map[? to_set] = mouse_button;
+                global.in_method[? to_set] = in_modes.mouse;
+                editmode = false;
+                save_settings();
+            }
+            //Since we can't know if there was a gamepad input made without 
+            //checking all of the gamepads and all of the inputs on each,
+            //just check if the input mode supports game pads,
+            //and if there is a game pad
+            else if(ds_list_size(global.pads) &gt; 0 and (global.multi_input or global.in_method == in_modes.gp))
+            {
+                for(var i = 0; i &lt; ds_list_size(global.pads); i++)
+                {
+                    var pad = global.pads[| i];
+                    var button = -1;
+                    var gp_key =  in_modes.gp + (pad / 100);
+                    
+                    if(gamepad_button_check_pressed(pad, gp_face1))             { button = gp_face1; }
+                    else if(gamepad_button_check_pressed(pad, gp_face2))        { button = gp_face2; }
+                    else if(gamepad_button_check_pressed(pad, gp_face3))        { button = gp_face3; }
+                    else if(gamepad_button_check_pressed(pad, gp_face4))        { button = gp_face4; }
+                    else if(gamepad_button_check_pressed(pad, gp_shoulderl))    { button = gp_shoulderl; }
+                    else if(gamepad_button_check_pressed(pad, gp_shoulderr))    { button = gp_shoulderr; }
+                    else if(gamepad_button_check_pressed(pad, gp_shoulderlb))   { button = gp_shoulderlb; }
+                    else if(gamepad_button_check_pressed(pad, gp_shoulderrb))   { button = gp_shoulderrb; }
+                    else if(gamepad_button_check_pressed(pad, gp_select))       { button = gp_select; }
+                    else if(gamepad_button_check_pressed(pad, gp_start))        { button = gp_start; }
+                    else if(gamepad_button_check_pressed(pad, gp_stickl))       { button = gp_stickl; }
+                    else if(gamepad_button_check_pressed(pad, gp_stickr))       { button = gp_stickr; }
+                    else if(gamepad_button_check_pressed(pad, gp_padu))         { button = gp_padu; }
+                    else if(gamepad_button_check_pressed(pad, gp_padd))         { button = gp_padd; }
+                    else if(gamepad_button_check_pressed(pad, gp_padl))         { button = gp_padl; }
+                    else if(gamepad_button_check_pressed(pad, gp_padr))         { button = gp_padr; }
+                    
+                    if(button != -1)
+                    {
+                        global.in_map[? to_set] = button;
+                        global.in_method[? to_set] = gp_key;
+                        editmode = false;
+                        save_settings();
+                    }
+                    //Not a button input,
+                    //try the axes
+                    else
+                    {
+                        var lh = gamepad_axis_value(global.pads[| i], gp_axislh);
+                        var lv = gamepad_axis_value(global.pads[| i], gp_axislv);
+                        var rh = gamepad_axis_value(global.pads[| i], gp_axisrh);
+                        var rv = gamepad_axis_value(global.pads[| i], gp_axisrv);
+                        
+                        var axis = -1;
+                        
+                        if(abs(lh) &gt; abs(lv))       { axis = gp_axislh; }
+                        else if(abs(lv) &gt; abs(lh))  { axis = gp_axislv; }
+                        else if(abs(rh) &gt; abs(rv))  { axis = gp_axisrh; }
+                        else if(abs(rv) &gt; abs(rh))  { axis = gp_axisrv; }
+                        
+                        if(axis != -1)
+                        {
+                            global.in_map[? to_set] = axis;
+                            global.in_method[? to_set] = in_modes.gp + (global.pads[| i] / 100) + (2 + sign(gamepad_axis_value(pad, axis)))/1000;
+                            editmode = false;
+                            save_settings();
+                        }
+                    }
+                }
+            }  
+        }
+    }
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="64">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>draw_set_color(c_gray);
+draw_set_alpha(0.75);
+draw_rectangle(0, 0, w, h, false);
+draw_set_alpha(1);
+
+
+draw_set_color(c_black);
+draw_set_valign(fa_top);
+draw_set_halign(fa_center);
+draw_set_font(dos_font_xl);
+draw_text(w/2, string_height("TETRIS")*0.25, "TETRIS");
+draw_set_font(dos_font_md);
+
+//Selection box
+draw_set_valign(fa_middle);
+if(goal_x == x and goal_y = y)
+{
+    if(!editmode) { draw_set_color(c_teal); } 
+    else { draw_set_color(c_red); }  
+    if(area == "controls" and selection &gt; CONTROL_PAGE_NUMBER) 
+    {
+        draw_rectangle( (w*global.PADDING/2), ((h/3)-(global.box_lg_height/2)+(global.lg_height*CONTROL_PAGE_NUMBER)), (w-(w*global.PADDING/2)), ((h/3)+(global.box_lg_height/2)+(global.lg_height*CONTROL_PAGE_NUMBER)), false);
+    }
+    else
+    {
+        var start_height = 0
+        if(area == "main") { start_height = h/2; }
+        else if(area == "options") { start_height = h/3; }
+        else if(area == "controls") { start_height = h/3; }
+        else if(area == "gamecontrols") { start_height = h/3; }
+        else if(area == "menucontrols") { start_height = h/3; }
+        else if(area == "display") { start_height = h/3; }
+        else if(area == "sound") { start_height = h/3; }
+        var selectedItem = get_active_menu_item(sections[? area], selection);
+        var visibleIndex = find_visible_index_by_name(sections[? area], selectedItem.name);
+        //draw_rectangle( (w*global.PADDING/2), ((start_height)-(global.box_lg_height/2)+(global.lg_height*selection)), (w-(w*global.PADDING/2)), ((start_height)+(global.box_lg_height/2)+(global.lg_height*selection)), false);
+        draw_rectangle( (w*global.PADDING/2), ((start_height)-(global.box_lg_height/2)+(global.lg_height*visibleIndex)), (w-(w*global.PADDING/2)), ((start_height)+(global.box_lg_height/2)+(global.lg_height*visibleIndex)), false);
+    }
+}
+draw_set_color(c_black);
+
+//THEY ALL USE LG, SO JUST SET IT ONCE HERE
+draw_set_font(dos_font_lg);
+
+var i = 0;
+var iOffset = 0;
+var mi = noone;
+
+//MAIN
+if(area == "main" or (last_area == "main" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{   
+    for(i = 0; i &lt; ds_list_size(main); i++)
+    {
+        mi = main[|i];
+        if(mi.state == menu_item_state.invisible) 
+        {
+            iOffset++;
+            continue;
+        }
+        draw_text(w/2-x, h/2+global.lg_height*(i-iOffset)-y, main[|i].name);
+    }
+}
+
+i = 0;
+iOffset = 0;
+mi = noone;
+
+//OPTIONS
+if(area == "options" or (last_area == "options" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(dos_font_xl);
+    draw_set_halign(fa_middle);
+    draw_text(w/2+w-x, string_height("OPTIONS")*1.5*(1+global.PADDING) - y, "OPTIONS");
+    draw_set_font(dos_font_lg);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(options); i++)
+    {
+        var mi = options[|i];
+        if(mi.state == menu_item_state.invisible) 
+        {
+            iOffset++;
+            continue;
+        }
+        
+        draw_text(w*global.PADDING/2+w-x, h/3+global.lg_height*(i-iOffset)-y, mi.name);
+        draw_set_halign(fa_right);
+        draw_text(2*w-x-w*global.PADDING/2, h/3+global.lg_height*(i-iOffset)-y, mi.value);
+        draw_set_halign(fa_left);
+    }
+}
+
+//CONTROLS
+if(area == "controls" or (last_area == "controls" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(dos_font_xl);
+    draw_set_halign(fa_middle);
+    draw_text(w/2+w*2-x, string_height("CONTROLS")*1.5*(1+global.PADDING - y), "CONTROLS");
+    draw_set_font(dos_font_lg);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(controls); i++)
+    {
+        var mi = controls[|i];
+        if(mi.state == menu_item_state.invisible) 
+        {
+            iOffset++;
+            continue;
+        }
+        
+        draw_text(w*global.PADDING/2+w*2-x, h/3+global.lg_height*(i-iOffset)-y, mi.name);
+        draw_set_halign(fa_right);
+        draw_text(3*w-x-w*global.PADDING/2, h/3+global.lg_height*(i-iOffset)-y, mi.value);
+        draw_set_halign(fa_left);
+    }
+}
+
+//GAMECONTROLS
+if(area == "gamecontrols" or (last_area == "gamecontrols" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(dos_font_xl);
+    draw_set_halign(fa_center);
+    draw_text(w/2+w*2-x, -h+string_height("CONTROLS")*1.5*(1+global.PADDING - y), "CONTROLS");
+    draw_set_font(dos_font_lg);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(gamecontrols); i++)
+    {
+        var mi = gamecontrols[|i];
+        if(mi.state == menu_item_state.invisible) 
+        {
+            iOffset++;
+            continue;
+        }
+        
+        draw_text(w*global.PADDING/2+w*2-x, -h+h/3+global.lg_height*(i-iOffset)-y, mi.name);
+        draw_set_halign(fa_right);
+        draw_text(3*w-x-w*global.PADDING/2, -h+h/3+global.lg_height*(i-iOffset)-y, mi.value);
+        draw_set_halign(fa_left);
+    }
+}
+
+//MENUCONTROLS
+if(area == "menucontrols" or (last_area == "menucontrols" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(dos_font_xl);
+    draw_set_halign(fa_center);
+    draw_text(w/2+w*2-x, h+string_height("CONTROLS")*1.5*(1+global.PADDING - y), "CONTROLS");
+    draw_set_font(dos_font_lg);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(menucontrols); i++)
+    {
+        var mi = menucontrols[|i];
+        if(mi.state == menu_item_state.invisible) 
+        {
+            iOffset++;
+            continue;
+        }
+    
+        draw_text(w*global.PADDING/2+w*2-x, h+h/3+global.lg_height*(i-iOffset)-y, mi.name);
+        draw_set_halign(fa_right);
+        draw_text(3*w-x-w*global.PADDING/2, h+h/3+global.lg_height*(i-iOffset)-y, mi.value);
+        draw_set_halign(fa_left);
+    }
+}
+
+//DISPLAY
+if(area == "display" or (last_area == "display" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(dos_font_xl);
+    draw_set_halign(fa_center);
+    draw_text(w-x+w/2, string_height("DISPLAY OPTIONS")*1.5*(1+global.PADDING)-h-y, "DISPLAY OPTIONS");
+    draw_set_font(dos_font_lg);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(display); i++)
+    {
+        var mi = display[|i];
+        if(mi.state == menu_item_state.invisible) 
+        {
+            iOffset++;
+            continue;
+        }    
+    
+        draw_text(w+w*global.PADDING/2-x, -y-h+h/3+global.lg_height*(i-iOffset), mi.name);
+        draw_set_halign(fa_right);
+        draw_text(w*2-w*global.PADDING/2-x, -y-h+h/3+global.lg_height*(i-iOffset), mi.value);
+        draw_set_halign(fa_left);
+        if(mi.state == menu_item_state.disabled)
+        {
+            draw_rectangle( (w*global.PADDING/2), -y-h+h/3+global.lg_height*(i-iOffset-0.0625), (w-(w*global.PADDING/2)), -y-h+h/3+global.lg_height*(i-iOffset+0.0625), false);
+        }
+    } 
+}
+
+//SOUND
+if(area == "sound" or (last_area == "sound" and ( abs(x - goal_x) &gt; tolerance or abs(y - goal_y) &gt; tolerance )))
+{
+    draw_set_font(dos_font_xl);
+    draw_set_halign(fa_center);
+    draw_text(w-x+w/2, string_height("OPTIONS")*1.5*(1+global.PADDING)+h-y, "AUDIO OPTIONS");
+    draw_set_font(dos_font_lg);
+    draw_set_halign(fa_left);
+    for(i = 0; i &lt; ds_list_size(sound); i++)
+    {
+        var mi = sound[|i];
+        if(mi.state == menu_item_state.invisible) 
+        {
+            iOffset++;
+            continue;
+        } 
+        
+        draw_text(w+w*global.PADDING/2-x, -y+h+h/3+global.lg_height*(i-iOffset), mi.name);
+        draw_set_halign(fa_right);
+        draw_text(w*2-w*global.PADDING/2-x, -y+h+h/3+global.lg_height*(i-iOffset), mi.value);
+        //else if(i == 1) { draw_text(w*2-w*PADDING/2-x, -y+h+h/3+large_height*i, string(global.music_level)); }
+        //else if(i == 2) { draw_text(w*2-w*PADDING/2-x, -y+h+h/3+large_height*i, string(global.sfx_level)); }
+    //    else if(i == 3) { draw_text(w*2-w*PADDING/2-x, -y-h+h/3+large_height*i, boolean_replace(global.debug_overlay, "oo")); }
+        draw_set_halign(fa_left);
+    } 
+}
+
+draw_set_halign(fa_left);
 </string>
           </argument>
         </arguments>
